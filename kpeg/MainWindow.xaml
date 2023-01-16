@@ -13,7 +13,7 @@
         TextOptions.TextFormattingMode="Ideal"
         TextOptions.TextRenderingMode="Auto"
         Background="{DynamicResource MaterialDesignPaper}"
-        FontFamily="{DynamicResource MaterialDesignFont}" ResizeMode="NoResize" WindowStyle="None">
+        FontFamily="{DynamicResource MaterialDesignFont}" ResizeMode="NoResize" WindowStyle="None" Closing="Window_Closing">
     <!--<Grid>
         <Border Height="30" VerticalAlignment="Top">
             <Grid>
@@ -29,7 +29,7 @@
                     </Button.Background>
                 </Button>
                 <Button VerticalAlignment="Top" HorizontalAlignment="Left" Width="95" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}">
-                    
+
                 </Button>
             </Grid>
         </Border>
@@ -37,8 +37,15 @@
             <Grid>
                 <TextBox Width="400" Height="30" Name="textBox1" TextAlignment="Center" TextChanged="textBox_TextChanged" VerticalAlignment="Top" Margin="0,10,0,0"/>
                 <TextBox Width="340" Height="30" Name="textBox2" TextAlignment="Center" TextChanged="textBox2_TextChanged" VerticalAlignment="Top" Margin="0,50,60,0"/>
+                <CheckBox Content="Open directory after download" FontSize="16" VerticalAlignment="Top" Margin="10,10,0,0" Foreground="White"/>
+                <CheckBox Content="Open converter after download" FontSize="16" Foreground="White" VerticalAlignment="Top" Margin="10,30,0,0"/>
+                <CheckBox Content="Convert to mp4" FontSize="16" Foreground="White" VerticalAlignment="Top" Margin="10,50,0,0"/>
+                <CheckBox Content="Download audio only" FontSize="16" Foreground="White" VerticalAlignment="Top" Margin="10,70,0,0"/>
                 <Button Width="60" Padding="0,0,0,0" VerticalAlignment="Top" Margin="350,50,0,0">Browse</Button>
                 <Button Margin="100,0,100,300">Download</Button>
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,200" FontSize="30" Foreground="White" TextWrapping="Wrap" TextAlignment="Center" Text="ahahahahahaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"></TextBlock>
+                <Image Stretch="Uniform" Width="800" Height="280" Margin="0,145,0,0"/>
+                <ProgressBar Height="30" VerticalAlignment="Bottom" Value="50"></ProgressBar>
             </Grid>
         </Border>
     </Grid>-->
