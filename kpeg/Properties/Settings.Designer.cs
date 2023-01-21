@@ -70,5 +70,41 @@ namespace kpeg.Properties {
                 this["downloadAudioOnly"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool downloadAudioAsMp3 {
+            get {
+                return ((bool)(this["downloadAudioAsMp3"]));
+            }
+            set {
+                this["downloadAudioAsMp3"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool setModifiedDate {
+            get {
+                return ((bool)(this["setModifiedDate"]));
+            }
+            set {
+                this["setModifiedDate"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string downloadDirectory {
+            get {
+                return ((string)(this["downloadDirectory"]));
+            }
+            set {
+                this["downloadDirectory"] = value;
+            }
+        }
     }
 }
