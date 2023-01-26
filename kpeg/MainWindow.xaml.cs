@@ -43,6 +43,15 @@ namespace kpeg
         CheckBox audioOnlyCheckBox = new CheckBox();
         CheckBox convertToMp3CheckBox = new CheckBox();
         CheckBox setDateModifiedToCurrentCheckBox = new CheckBox();
+        CheckBox clipVideoCheckBox = new CheckBox();
+
+        StackPanel clipVideoSpanPanel = new StackPanel();
+        TextBox startMinClipBox = new TextBox();
+        TextBox endMinClipBox = new TextBox();
+        TextBox startSecClipBox = new TextBox();
+        TextBox endSecClipBox = new TextBox();
+        TextBox startHourClipBox = new TextBox();
+        TextBox endHourClipBox = new TextBox();
 
         TextBlock videoTitleBlock = new TextBlock();
         System.Windows.Controls.Image videoThumbnail = new System.Windows.Controls.Image();
@@ -159,6 +168,8 @@ namespace kpeg
             downloadGrid.Children.Add(audioOnlyCheckBox);
             downloadGrid.Children.Add(convertToMp3CheckBox);
             downloadGrid.Children.Add(setDateModifiedToCurrentCheckBox);
+            downloadGrid.Children.Add(clipVideoCheckBox);
+            downloadGrid.Children.Add(clipVideoSpanPanel);
 
             openDirectoryCheckBox.IsChecked = Properties.Settings.Default.openDirectoryAfterDownload;
             openDirectoryCheckBox.FontSize = 16;
@@ -225,6 +236,55 @@ namespace kpeg
             setDateModifiedToCurrentCheckBox.BorderBrush = mainBrush;
             setDateModifiedToCurrentCheckBox.Checked += setDateCheckBoxChanged;
             setDateModifiedToCurrentCheckBox.Unchecked += setDateCheckBoxChanged;
+
+            clipVideoCheckBox.IsChecked = Properties.Settings.Default.downloadClip;
+            clipVideoCheckBox.FontSize = 16;
+            clipVideoCheckBox.Foreground = System.Windows.Media.Brushes.White;
+            clipVideoCheckBox.VerticalAlignment = VerticalAlignment.Top;
+            clipVideoCheckBox.Margin = new Thickness(700, 30, 0, 0);
+            clipVideoCheckBox.Content = "Only download part of the video";//TODO:move temporary files to appdata/temp and give them a randomized name
+            clipVideoCheckBox.Background = mainBrush;
+            clipVideoCheckBox.BorderBrush = mainBrush;
+            clipVideoCheckBox.Checked += clipVideoCheckBoxChanged;
+            clipVideoCheckBox.Unchecked += clipVideoCheckBoxChanged;
+
+            clipVideoSpanPanel.Orientation=Orientation.Horizontal;
+            clipVideoSpanPanel.Margin = new Thickness(700, 50, 0, 0);
+            clipVideoSpanPanel.VerticalAlignment = VerticalAlignment.Top;
+
+            Label separator1 = new Label(), separator2 = new Label(), separator3 = new Label(), separator4 = new Label(), fromLabel = new Label(), toLabel = new Label();
+            clipVideoSpanPanel.Children.Add(fromLabel);
+            clipVideoSpanPanel.Children.Add(startSecClipBox);
+            clipVideoSpanPanel.Children.Add(separator1);
+            clipVideoSpanPanel.Children.Add(startMinClipBox);
+            clipVideoSpanPanel.Children.Add(separator2);
+            clipVideoSpanPanel.Children.Add(startHourClipBox);
+            clipVideoSpanPanel.Children.Add(toLabel);
+            clipVideoSpanPanel.Children.Add(endSecClipBox);
+            clipVideoSpanPanel.Children.Add(separator3);
+            clipVideoSpanPanel.Children.Add(endMinClipBox);
+            clipVideoSpanPanel.Children.Add(separator4);
+            clipVideoSpanPanel.Children.Add(endHourClipBox);
+            fromLabel.Content = "From ";
+            toLabel.Content = " To ";
+            separator1.Content = ":";
+            separator2.Content = ":";
+            separator3.Content = ":";
+            separator4.Content = ":";
+
+            startSecClipBox.Width = 16;
+            startMinClipBox.Width = 16;
+            startHourClipBox.Width = 16;
+            endSecClipBox.Width = 16;
+            endMinClipBox.Width = 16;
+            endHourClipBox.Width = 16;
+
+            startSecClipBox.CaretBrush = mainBrush;
+            startMinClipBox.CaretBrush = mainBrush;
+            startHourClipBox.CaretBrush = mainBrush;
+            endSecClipBox.CaretBrush = mainBrush;
+            endMinClipBox.CaretBrush = mainBrush;
+            endHourClipBox.CaretBrush = mainBrush;
 
             downloadGrid.Children.Add(textBox1);
             textBox1.Width = 400;
@@ -359,6 +419,12 @@ namespace kpeg
             Properties.Settings.Default.setModifiedDate = setDateModifiedToCurrentCheckBox.IsChecked.Value;
             Properties.Settings.Default.Save();
         }
+        private void clipVideoCheckBoxChanged(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.downloadClip = clipVideoCheckBox.IsChecked.Value;
+            Properties.Settings.Default.Save();
+            updateCheckBoxAccessibiity();
+        }
         private void browseButtonClicked(object sender, RoutedEventArgs e)
         {
             System.Windows.Forms.FolderBrowserDialog fbd = new System.Windows.Forms.FolderBrowserDialog();
@@ -382,14 +448,8 @@ namespace kpeg
             {
                 convertToMp4CheckBox.IsEnabled = true;
             }
-            if(audioOnlyCheckBox.IsChecked.Value)
-            {
-                convertToMp3CheckBox.IsEnabled = true;
-            }
-            else
-            {
-                convertToMp3CheckBox.IsEnabled = false;
-            }
+            convertToMp3CheckBox.IsEnabled = audioOnlyCheckBox.IsChecked.Value;
+            clipVideoSpanPanel.IsEnabled = clipVideoCheckBox.IsChecked.Value;
         }
         public static string GetHomePath()
         {

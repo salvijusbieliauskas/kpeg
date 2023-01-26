@@ -106,5 +106,17 @@ namespace kpeg.Properties {
                 this["downloadDirectory"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool downloadClip {
+            get {
+                return ((bool)(this["downloadClip"]));
+            }
+            set {
+                this["downloadClip"] = value;
+            }
+        }
     }
 }
