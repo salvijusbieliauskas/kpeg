@@ -14,7 +14,7 @@
         TextOptions.TextRenderingMode="Auto"
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}" ResizeMode="NoResize" WindowStyle="None" Closing="Window_Closing" Activated="windowActivated">
-    <!--<Grid>
+    <Grid>
         <Border Height="30" VerticalAlignment="Top">
             <Grid>
                 <Image Source="pack://application:,,,/Resources/top.png" MouseDown="Image_MouseDown"/>
@@ -34,22 +34,47 @@
             </Grid>
         </Border>
         <Border Margin="0,30,0,0">
-            <Grid>
-                <TextBox Width="400" Height="30" Name="textBox1" TextAlignment="Center" TextChanged="textBox_TextChanged" VerticalAlignment="Top" Margin="0,10,0,0"/>
-                <TextBox Width="340" Height="30" Name="textBox2" TextAlignment="Center" TextChanged="textBox2_TextChanged" VerticalAlignment="Top" Margin="0,50,60,0"/>
-                <CheckBox Content="Open directory after download" FontSize="16" VerticalAlignment="Top" Margin="10,10,0,0" Foreground="White"/>
-                <CheckBox Content="Open converter after download" FontSize="16" Foreground="White" VerticalAlignment="Top" Margin="10,30,0,0"/>
-                <CheckBox Content="Convert to mp4" FontSize="16" Foreground="White" VerticalAlignment="Top" Margin="10,50,0,0"/>
-                <CheckBox Content="Download audio only" FontSize="16" Foreground="White" VerticalAlignment="Top" Margin="10,70,0,0"/>
-                <CheckBox Content="Convert audio to mp3 (nukes quality)" FontSize="16" Foreground="White" VerticalAlignment="Top" Margin="10,90,0,0"/>
-                <CheckBox Content="Set modified date to current" FontSize="16" Foreground="White" VerticalAlignment="Top" Margin="700,10,0,0"/>
-                <Button Width="60" Padding="0,0,0,0" VerticalAlignment="Top" Margin="350,50,0,0">Browse</Button>
-                <Button Margin="100,0,100,300">Download</Button>
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,200" FontSize="30" Foreground="White" TextWrapping="Wrap" TextAlignment="Center" Text="ahahahahahaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"></TextBlock>
-                <Image Stretch="Uniform" Width="800" Height="280" Margin="0,145,0,0"/>
-                <Label VerticalAlignment="Bottom" HorizontalAlignment="Center" FontSize="15" Margin="0,0,0,30">Downloading video</Label>
-                <ProgressBar Height="30" VerticalAlignment="Bottom" Value="50"></ProgressBar>
-            </Grid>
+            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                <Grid Width="719">
+                    <StackPanel Orientation="Vertical">
+                        <Label HorizontalAlignment="Center" FontSize="24" FontWeight="Bold">Output settings</Label>
+                        <Rectangle Width="719" Height="1" Fill="Black"></Rectangle>
+                        <StackPanel Orientation="Vertical" Margin="10,10,10,10">
+                            <StackPanel Orientation="Horizontal">
+                                <Label>Format: </Label>
+                                <ComboBox></ComboBox>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label>Resolution:</Label>
+                                <TextBox>50000</TextBox>
+                                <Label>x</Label>
+                                <TextBox>50000</TextBox>
+                            </StackPanel>
+                            <Expander Header="Advanced settings">
+                                <StackPanel Orientation="Vertical">
+                                    
+                                </StackPanel>
+                            </Expander>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+                <Rectangle VerticalAlignment="Stretch" Width="1" Margin="0,0,0,0" Stroke="Black" />
+                <Grid Width="240">
+                    <StackPanel Orientation="Vertical">
+                        <Label HorizontalAlignment="Center" FontSize="24" FontWeight="Bold">Input settings</Label>
+                        <Rectangle Width="240" Height="1" Fill="Black"></Rectangle>
+                        <TextBox VerticalAlignment="Top" Margin="0,10,0,0" Text="C:\Users\Administrator\Downloads" TextAlignment="Center"></TextBox>
+                        <Button VerticalAlignment="Top" Margin="0,5,0,0">Browse</Button>
+                        <Label>Resolution: </Label>
+                        <Label>Bitrate: </Label>
+                        <Label>Format: </Label>
+                        <Label>Frames:</Label>
+                        <Label>Framerate:</Label>
+                        <Label FontSize="18" HorizontalAlignment="Center">filename</Label>
+                        <Image Width="240" Height="240"></Image>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
         </Border>
-    </Grid>-->
+    </Grid>
 </Window>

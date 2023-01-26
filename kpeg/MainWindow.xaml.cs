@@ -31,6 +31,7 @@ namespace kpeg
         VisualBrush vb = new VisualBrush();
         Border startingBorder = new Border();
         Border downloadBorder = new Border();
+        Border convertBorder = new Border();
         TextBox textBox1 = new TextBox();
         TextBox textBox2 = new TextBox();
         Label downloadProgressLabel = new Label();
@@ -293,6 +294,18 @@ namespace kpeg
             downloadProgressLabel.Margin = new Thickness(0, 0, 0, 30);
 
 
+            convertBorder.Name = "convertBorder";
+            convertBorder.Opacity = 0.0;
+            this.RegisterName(convertBorder.Name, convertBorder);
+            mainGrid.Children.Add(convertBorder);
+            convertBorder.Margin = new Thickness(0, 30, 0, 0);
+            convertBorder.IsEnabled = false;
+
+            Grid convertGrid = new Grid();
+            convertBorder.Child = convertGrid;
+
+
+
             updateCheckBoxAccessibiity();
 
             textBox_TextChanged(null, null);
@@ -518,7 +531,7 @@ namespace kpeg
                     if (isPlaylist)
                     {
                         if (currentItem > 0 && maxItems > 0)
-                            downloadProgressLabel.Content += string.Format(" (item {0} of {1})", currentItem, maxItems);
+                            downloadProgressLabel.Content += string.Format(" (item {0} of {1})", currentItem, maxItems);//TODO: green doesnt work, converting text does not work
                     }
                 }
                 else
