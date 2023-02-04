@@ -539,6 +539,7 @@ namespace kpeg
             bool convertToMp3 = Properties.Settings.Default.downloadAudioAsMp3;
             bool convertToMp4 = Properties.Settings.Default.convertToMp4;
             bool isPlaylist = Utils.isPlayList(url);
+            bool downloadClip = Properties.Settings.Default.downloadClip;
             info.Arguments = "";
             if (audioOnly)
             {
@@ -550,6 +551,13 @@ namespace kpeg
                 info.Arguments += " -f \"bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best\"";
             if (Properties.Settings.Default.setModifiedDate)
                 info.Arguments += " --no-mtime";
+            if (downloadClip)
+            {
+                int from = int.Parse(startSecClipBox.Text) + int.Parse(startMinClipBox.Text) * 60 + int.Parse(startHourClipBox.Text) * 3600;
+                int to = int.Parse(endSecClipBox.Text) + int.Parse(endMinClipBox.Text) * 60 + int.Parse(endHourClipBox.Text) * 3600;
+
+                info.Arguments += string.Format(" --download-sections \"*{0}-{1}\"",from,to);
+            }
             info.Arguments += " " + url;
             info.WorkingDirectory = Properties.Settings.Default.downloadDirectory;
             info.CreateNoWindow = true;
