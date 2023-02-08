@@ -122,7 +122,7 @@ namespace kpeg
             convertToMp3CheckBox.Foreground = System.Windows.Media.Brushes.White;
             convertToMp3CheckBox.VerticalAlignment = VerticalAlignment.Top;
             convertToMp3CheckBox.Margin = new Thickness(10, 90, 0, 0);
-            convertToMp3CheckBox.Content = "Convert audio to mp3 (nukes quality)";
+            convertToMp3CheckBox.Content = "Convert audio to wav (slightly reduces quality)";
             convertToMp3CheckBox.Background = mainWindowInstance.mainBrush;
             convertToMp3CheckBox.BorderBrush = mainWindowInstance.mainBrush;
             convertToMp3CheckBox.Checked += mp3ConvertCheckBoxChanged;
@@ -156,17 +156,17 @@ namespace kpeg
 
             Label separator1 = new Label(), separator2 = new Label(), separator3 = new Label(), separator4 = new Label(), fromLabel = new Label(), toLabel = new Label();
             clipVideoSpanPanel.Children.Add(fromLabel);
-            clipVideoSpanPanel.Children.Add(startSecClipBox);
+            clipVideoSpanPanel.Children.Add(startHourClipBox);
             clipVideoSpanPanel.Children.Add(separator1);
             clipVideoSpanPanel.Children.Add(startMinClipBox);
             clipVideoSpanPanel.Children.Add(separator2);
-            clipVideoSpanPanel.Children.Add(startHourClipBox);
+            clipVideoSpanPanel.Children.Add(startSecClipBox);
             clipVideoSpanPanel.Children.Add(toLabel);
-            clipVideoSpanPanel.Children.Add(endSecClipBox);
+            clipVideoSpanPanel.Children.Add(endHourClipBox);
             clipVideoSpanPanel.Children.Add(separator3);
             clipVideoSpanPanel.Children.Add(endMinClipBox);
             clipVideoSpanPanel.Children.Add(separator4);
-            clipVideoSpanPanel.Children.Add(endHourClipBox);
+            clipVideoSpanPanel.Children.Add(endSecClipBox);
             fromLabel.Content = "From ";
             toLabel.Content = " To ";
             separator1.Content = ":";
@@ -174,12 +174,12 @@ namespace kpeg
             separator3.Content = ":";
             separator4.Content = ":";
 
-            startSecClipBox.Width = 16;
-            startMinClipBox.Width = 16;
-            startHourClipBox.Width = 16;
-            endSecClipBox.Width = 16;
-            endMinClipBox.Width = 16;
-            endHourClipBox.Width = 16;
+            startSecClipBox.Width = 17;
+            startMinClipBox.Width = 17;
+            startHourClipBox.Width = 17;
+            endSecClipBox.Width = 17;
+            endMinClipBox.Width = 17;
+            endHourClipBox.Width = 17;
 
             startSecClipBox.CaretBrush = mainWindowInstance.mainBrush;
             startMinClipBox.CaretBrush = mainWindowInstance.mainBrush;
@@ -187,6 +187,34 @@ namespace kpeg
             endSecClipBox.CaretBrush = mainWindowInstance.mainBrush;
             endMinClipBox.CaretBrush = mainWindowInstance.mainBrush;
             endHourClipBox.CaretBrush = mainWindowInstance.mainBrush;
+
+            startSecClipBox.TextChanged += timeBoxChanged;
+            startMinClipBox.TextChanged += timeBoxChanged;
+            startHourClipBox.TextChanged += timeBoxChanged;
+            endSecClipBox.TextChanged += timeBoxChanged;
+            endMinClipBox.TextChanged += timeBoxChanged;
+            endHourClipBox.TextChanged += timeBoxChanged;
+
+            //startSecClipBox.GotFocus += timeBoxFocused;
+            //startMinClipBox.TextChanged += timeBoxFocused;
+            //startHourClipBox.TextChanged += timeBoxFocused;
+            //endSecClipBox.TextChanged += timeBoxFocused;
+            //endMinClipBox.TextChanged += timeBoxFocused;
+            //endHourClipBox.TextChanged += timeBoxFocused;
+
+            //startSecClipBox.MaxLength = 2;
+            //startMinClipBox.MaxLength = 2;
+            //startHourClipBox.MaxLength = 2;
+            //endSecClipBox.MaxLength = 2;
+            //endMinClipBox.MaxLength = 2;
+            //endHourClipBox.MaxLength = 2;
+
+            startSecClipBox.Text = "00";
+            startMinClipBox.Text = "00";
+            startHourClipBox.Text = "00";
+            endSecClipBox.Text = "00";
+            endMinClipBox.Text = "00";
+            endHourClipBox.Text ="00";
 
             downloadGrid.Children.Add(textBox1);
             textBox1.Width = 400;
@@ -311,6 +339,22 @@ namespace kpeg
             if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 textBox2.Text = fbd.SelectedPath;
+            }
+        }
+        private void timeBoxChanged(object sender, RoutedEventArgs e)
+        {
+            TextBox senderBox = (TextBox)sender;
+            if(senderBox.Text.Length>2)
+            {
+                senderBox.Text = senderBox.Text.Substring(0, 2);
+                senderBox.CaretIndex = 2;
+            }
+            for(int x = 0; x < senderBox.Text.Length; x++)
+            {
+                if(!Char.IsNumber(senderBox.Text, x))
+                {
+                    senderBox.Text = senderBox.Text.Remove(x,1);
+                }
             }
         }
         private string downloadThumbnail(string url)
@@ -545,7 +589,7 @@ namespace kpeg
             {
                 info.Arguments += "-f \"bestaudio\" -x";
                 if (convertToMp3)
-                    info.Arguments += " --audio-format mp3";
+                    info.Arguments += " --audio-format wav";
             }
             else if (convertToMp4)
                 info.Arguments += " -f \"bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best\"";
@@ -553,12 +597,16 @@ namespace kpeg
                 info.Arguments += " --no-mtime";
             if (downloadClip)
             {
-                int from = int.Parse(startSecClipBox.Text) + int.Parse(startMinClipBox.Text) * 60 + int.Parse(startHourClipBox.Text) * 3600;
-                int to = int.Parse(endSecClipBox.Text) + int.Parse(endMinClipBox.Text) * 60 + int.Parse(endHourClipBox.Text) * 3600;
+                mainWindowInstance.Dispatcher.Invoke((Action)(() =>
+                {
+                    int from = int.Parse(startSecClipBox.Text) + int.Parse(startMinClipBox.Text) * 60 + int.Parse(startHourClipBox.Text) * 3600;
+                    int to = int.Parse(endSecClipBox.Text) + int.Parse(endMinClipBox.Text) * 60 + int.Parse(endHourClipBox.Text) * 3600;
 
-                info.Arguments += string.Format(" --download-sections \"*{0}-{1}\"",from,to);
+                    info.Arguments += string.Format(" --download-sections \"*{0}-{1}\"", from, to);
+                }));
             }
             info.Arguments += " " + url;
+            System.Diagnostics.Debug.WriteLine(info.Arguments);
             info.WorkingDirectory = Properties.Settings.Default.downloadDirectory;
             info.CreateNoWindow = true;
             info.UseShellExecute = false;

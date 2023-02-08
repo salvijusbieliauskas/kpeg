@@ -14,7 +14,7 @@
         TextOptions.TextRenderingMode="Auto"
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}" ResizeMode="NoResize" WindowStyle="None" Closing="Window_Closing" Activated="windowActivated">
-    <Grid>
+    <!--<Grid>
         <Border Height="30" VerticalAlignment="Top">
             <Grid>
                 <Image Source="pack://application:,,,/Resources/top.png" MouseDown="Image_MouseDown"/>
@@ -81,5 +81,5 @@
                 </Grid>
             </StackPanel>
         </Border>
-    </Grid>
+    </Grid>-->
 </Window>

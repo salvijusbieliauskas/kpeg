@@ -67,15 +67,20 @@ namespace kpeg
         {
             string linkType1 = "youtu.be/";
             string linkType2 = "watch?v=";
-            if (link.IndexOf(linkType1) == -1 && link.IndexOf(linkType2) == -1)
+            string linkType3 = "shorts/";
+            if (link.IndexOf(linkType1) == -1 && link.IndexOf(linkType2) == -1 && link.IndexOf(linkType3) == -1)
                 return false;
             if (link.IndexOf(linkType1) > -1)
             {
                 return link.Length >= link.IndexOf(linkType1) + 11 + linkType1.Length;
             }
-            else
+            else if(link.IndexOf(linkType2) > -1)
             {
                 return link.Length >= link.IndexOf(linkType2) + 11 + linkType2.Length;
+            }
+            else
+            {
+                return link.Length >= link.IndexOf(linkType3) + 11 + linkType3.Length;
             }
         }
     }
