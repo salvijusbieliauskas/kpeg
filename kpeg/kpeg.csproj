@@ -72,6 +72,7 @@
     <Compile Include="ConvertWindow.cs" />
     <Compile Include="ProcessContainers\ThumbnailDownloader.cs" />
     <Compile Include="ProcessContainers\VideoNameDownloader.cs" />
+    <Compile Include="ProcessContainers\YTdlpUpdater.cs" />
     <Compile Include="Utils.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -130,6 +131,9 @@
     <Resource Include="Resources\placeholder1.png" />
     <Resource Include="Resources\placeholder2.png" />
     <Resource Include="Resources\thumbnailDownloading.png" />
+    <Content Include="Resources\phantomjs.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\yt-dlp.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

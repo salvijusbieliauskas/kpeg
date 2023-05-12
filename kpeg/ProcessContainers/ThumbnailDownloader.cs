@@ -17,7 +17,7 @@ namespace kpeg.ProcessContainers
         private Task thumbnailDownloadTask;
         private ThumbnailDownloader()
         {
-
+            thumbnailDownloadTask = new Task(new Action(() => { }));
         }
 
         public static ThumbnailDownloader GetInstance()
@@ -37,12 +37,33 @@ namespace kpeg.ProcessContainers
                 info.Arguments = "--skip-download --write-thumbnail --output tmpimage --convert-thumbnails png " + Utils.trimListPart(url);
                 info.CreateNoWindow = true;
                 info.UseShellExecute = false;
+                info.RedirectStandardOutput = true;
+                info.RedirectStandardError = true;
                 info.WorkingDirectory = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "Resources/");
                 p.StartInfo = info;
+                string accumulated = "";
+                p.OutputDataReceived += new DataReceivedEventHandler((s, e) =>
+                {
+                    accumulated += e.Data + '\n';
+                });
+                p.ErrorDataReceived += new DataReceivedEventHandler((s, e) =>
+                {
+                    accumulated += e.Data + '\n';
+                });
                 p.Start();
+                p.BeginErrorReadLine();
+                p.BeginOutputReadLine();
                 p.WaitForExit();
-                if(!Cancelled)
-                    Application.Current.Dispatcher.Invoke(new Action(() => { DownloadWindow.GetInstance().GetVideoThumbnail().Source = Utils.uriToSource(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "Resources/tmpimage.png")); }));
+                if (accumulated.Contains("yt-dlp -U"))
+                {
+                    Application.Current.Dispatcher.Invoke(new Action(() => { DownloadWindow.GetInstance().GetVideoTitleBlock().Text = "Update required. Please wait."; }));
+                    await YTdlpUpdater.GetInstance().updateYTDLP();
+                    await GetThumbnail(url);
+                    return;
+                }
+                if (!Cancelled)
+                    Application.Current.Dispatcher.Invoke(new Action(() => { DownloadWindow.GetInstance().GetVideoThumbnail().Source = Utils.uriToSource(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "Resources/tmpimage.png"));
+                    }));
                 else
                     Application.Current.Dispatcher.Invoke(new Action(() =>
                     {
@@ -50,7 +71,6 @@ namespace kpeg.ProcessContainers
                     }));
             }
         }
-
         public async Task UpdateThumbnail(string url)
         {
             if (!Utils.isLinkValid(url))
@@ -58,7 +78,7 @@ namespace kpeg.ProcessContainers
                 Application.Current.Dispatcher.Invoke(new Action(() => { DownloadWindow.GetInstance().GetVideoThumbnail().Source = null; }));
                 return;
             }
-            if (thumbnailDownloadTask.Status == TaskStatus.Running && CurrentURL == url)
+            if (CurrentURL == url)
                 return;
             if (thumbnailDownloadTask.Status == TaskStatus.Running)
             {

@@ -42,7 +42,6 @@ namespace kpeg
         private TextBox endSecClipBox = new TextBox();
         private TextBox startHourClipBox = new TextBox();
         private TextBox endHourClipBox = new TextBox();
-        private MainWindow mainWindowInstance;
 
         private System.Threading.Thread downloadThread;
         private Process downloadProcess = null;
@@ -54,12 +53,10 @@ namespace kpeg
         }
         private DownloadWindow()
         {
-            this.mainWindowInstance = mainWindowInstance;
-
             downloadBorder.Name = "downloadBorder";
             downloadBorder.Opacity = 0.0;
-            mainWindowInstance.RegisterName(downloadBorder.Name, downloadBorder);
-            mainWindowInstance.mainGrid.Children.Add(downloadBorder);
+            MainWindow.GetInstance().RegisterName(downloadBorder.Name, downloadBorder);
+            MainWindow.GetInstance().mainGrid.Children.Add(downloadBorder);
             downloadBorder.Margin = new Thickness(0, 30, 0, 0);
             downloadBorder.IsEnabled = false;
 
@@ -81,8 +78,8 @@ namespace kpeg
             openDirectoryCheckBox.VerticalAlignment = VerticalAlignment.Top;
             openDirectoryCheckBox.Margin = new Thickness(10, 10, 0, 0);
             openDirectoryCheckBox.Content = "Open directory after download";
-            openDirectoryCheckBox.Background = mainWindowInstance.mainBrush;
-            openDirectoryCheckBox.BorderBrush = mainWindowInstance.mainBrush;
+            openDirectoryCheckBox.Background = MainWindow.GetInstance().mainBrush;
+            openDirectoryCheckBox.BorderBrush = MainWindow.GetInstance().mainBrush;
             openDirectoryCheckBox.Checked += openDirectoryCheckBoxChanged;
             openDirectoryCheckBox.Unchecked += openDirectoryCheckBoxChanged;
 
@@ -92,8 +89,8 @@ namespace kpeg
             openConverterCheckBox.VerticalAlignment = VerticalAlignment.Top;
             openConverterCheckBox.Margin = new Thickness(10, 30, 0, 0);
             openConverterCheckBox.Content = "Open converter after download";
-            openConverterCheckBox.Background = mainWindowInstance.mainBrush;
-            openConverterCheckBox.BorderBrush = mainWindowInstance.mainBrush;
+            openConverterCheckBox.Background = MainWindow.GetInstance().mainBrush;
+            openConverterCheckBox.BorderBrush = MainWindow.GetInstance().mainBrush;
             openConverterCheckBox.Checked += openConverterCheckBoxChanged;
             openConverterCheckBox.Unchecked += openConverterCheckBoxChanged;
 
@@ -103,8 +100,8 @@ namespace kpeg
             convertToMp4CheckBox.VerticalAlignment = VerticalAlignment.Top;
             convertToMp4CheckBox.Margin = new Thickness(10, 50, 0, 0);
             convertToMp4CheckBox.Content = "Convert to mp4";
-            convertToMp4CheckBox.Background = mainWindowInstance.mainBrush;
-            convertToMp4CheckBox.BorderBrush = mainWindowInstance.mainBrush;
+            convertToMp4CheckBox.Background = MainWindow.GetInstance().mainBrush;
+            convertToMp4CheckBox.BorderBrush = MainWindow.GetInstance().mainBrush;
             convertToMp4CheckBox.Checked += mp4ConvertCheckBoxChanged;
             convertToMp4CheckBox.Unchecked += mp4ConvertCheckBoxChanged;
 
@@ -114,8 +111,8 @@ namespace kpeg
             audioOnlyCheckBox.VerticalAlignment = VerticalAlignment.Top;
             audioOnlyCheckBox.Margin = new Thickness(10, 70, 0, 0);
             audioOnlyCheckBox.Content = "Download audio only";
-            audioOnlyCheckBox.Background = mainWindowInstance.mainBrush;
-            audioOnlyCheckBox.BorderBrush = mainWindowInstance.mainBrush;
+            audioOnlyCheckBox.Background = MainWindow.GetInstance().mainBrush;
+            audioOnlyCheckBox.BorderBrush = MainWindow.GetInstance().mainBrush;
             audioOnlyCheckBox.Checked += audioOnlyCheckBoxChanged;
             audioOnlyCheckBox.Unchecked += audioOnlyCheckBoxChanged;
 
@@ -125,8 +122,8 @@ namespace kpeg
             convertToMp3CheckBox.VerticalAlignment = VerticalAlignment.Top;
             convertToMp3CheckBox.Margin = new Thickness(10, 90, 0, 0);
             convertToMp3CheckBox.Content = "Convert audio to wav (slightly reduces quality)";
-            convertToMp3CheckBox.Background = mainWindowInstance.mainBrush;
-            convertToMp3CheckBox.BorderBrush = mainWindowInstance.mainBrush;
+            convertToMp3CheckBox.Background = MainWindow.GetInstance().mainBrush;
+            convertToMp3CheckBox.BorderBrush = MainWindow.GetInstance().mainBrush;
             convertToMp3CheckBox.Checked += mp3ConvertCheckBoxChanged;
             convertToMp3CheckBox.Unchecked += mp3ConvertCheckBoxChanged;
 
@@ -136,8 +133,8 @@ namespace kpeg
             setDateModifiedToCurrentCheckBox.VerticalAlignment = VerticalAlignment.Top;
             setDateModifiedToCurrentCheckBox.Margin = new Thickness(700, 10, 0, 0);
             setDateModifiedToCurrentCheckBox.Content = "Set modified date to current";
-            setDateModifiedToCurrentCheckBox.Background = mainWindowInstance.mainBrush;
-            setDateModifiedToCurrentCheckBox.BorderBrush = mainWindowInstance.mainBrush;
+            setDateModifiedToCurrentCheckBox.Background = MainWindow.GetInstance().mainBrush;
+            setDateModifiedToCurrentCheckBox.BorderBrush = MainWindow.GetInstance().mainBrush;
             setDateModifiedToCurrentCheckBox.Checked += setDateCheckBoxChanged;
             setDateModifiedToCurrentCheckBox.Unchecked += setDateCheckBoxChanged;
 
@@ -147,8 +144,8 @@ namespace kpeg
             clipVideoCheckBox.VerticalAlignment = VerticalAlignment.Top;
             clipVideoCheckBox.Margin = new Thickness(700, 30, 0, 0);
             clipVideoCheckBox.Content = "Only download part of the video";//TODO:move temporary files to appdata/temp and give them a randomized name
-            clipVideoCheckBox.Background = mainWindowInstance.mainBrush;
-            clipVideoCheckBox.BorderBrush = mainWindowInstance.mainBrush;
+            clipVideoCheckBox.Background = MainWindow.GetInstance().mainBrush;
+            clipVideoCheckBox.BorderBrush = MainWindow.GetInstance().mainBrush;
             clipVideoCheckBox.Checked += clipVideoCheckBoxChanged;
             clipVideoCheckBox.Unchecked += clipVideoCheckBoxChanged;
 
@@ -183,12 +180,12 @@ namespace kpeg
             endMinClipBox.Width = 17;
             endHourClipBox.Width = 17;
 
-            startSecClipBox.CaretBrush = mainWindowInstance.mainBrush;
-            startMinClipBox.CaretBrush = mainWindowInstance.mainBrush;
-            startHourClipBox.CaretBrush = mainWindowInstance.mainBrush;
-            endSecClipBox.CaretBrush = mainWindowInstance.mainBrush;
-            endMinClipBox.CaretBrush = mainWindowInstance.mainBrush;
-            endHourClipBox.CaretBrush = mainWindowInstance.mainBrush;
+            startSecClipBox.CaretBrush = MainWindow.GetInstance().mainBrush;
+            startMinClipBox.CaretBrush = MainWindow.GetInstance().mainBrush;
+            startHourClipBox.CaretBrush = MainWindow.GetInstance().mainBrush;
+            endSecClipBox.CaretBrush = MainWindow.GetInstance().mainBrush;
+            endMinClipBox.CaretBrush = MainWindow.GetInstance().mainBrush;
+            endHourClipBox.CaretBrush = MainWindow.GetInstance().mainBrush;
 
             startSecClipBox.TextChanged += timeBoxChanged;
             startMinClipBox.TextChanged += timeBoxChanged;
@@ -225,7 +222,7 @@ namespace kpeg
             textBox1.TextChanged += textBox_TextChanged;
             textBox1.VerticalAlignment = VerticalAlignment.Top;
             textBox1.Margin = new Thickness(0, 10, 0, 0);
-            textBox1.CaretBrush = mainWindowInstance.mainBrush;
+            textBox1.CaretBrush = MainWindow.GetInstance().mainBrush;
 
             downloadGrid.Children.Add(textBox2);
             textBox2.Width = 340;
@@ -234,7 +231,7 @@ namespace kpeg
             textBox2.TextChanged += textBox2_TextChanged;
             textBox2.VerticalAlignment = VerticalAlignment.Top;
             textBox2.Margin = new Thickness(0, 50, 60, 0);
-            textBox2.CaretBrush = mainWindowInstance.mainBrush;
+            textBox2.CaretBrush = MainWindow.GetInstance().mainBrush;
             textBox2.TextChanged += downloadDirectoryChanged;
             textBox2.Text = Utils.GetDownloadFolderPath();
 
@@ -242,20 +239,20 @@ namespace kpeg
             downloadGrid.Children.Add(browseButton);
             browseButton.Width = 60;
             browseButton.Padding = new Thickness(0, 0, 0, 0);
-            browseButton.Background = mainWindowInstance.mainBrush;
+            browseButton.Background = MainWindow.GetInstance().mainBrush;
             browseButton.VerticalAlignment = VerticalAlignment.Top;
             browseButton.Margin = new Thickness(350, 50, 0, 0);
             browseButton.Content = "Browse";
             browseButton.Click += browseButtonClicked;
 
             downloadGrid.Children.Add(downloadConfirmButton);
-            downloadConfirmButton.Background = mainWindowInstance.mainBrush;
+            downloadConfirmButton.Background = MainWindow.GetInstance().mainBrush;
             downloadConfirmButton.Margin = new Thickness(100, 0, 100, 300);
             downloadConfirmButton.Content = "Download";
             downloadConfirmButton.IsEnabled = false;
             downloadConfirmButton.Click += downloadConfirmButtonClicked;
             downloadConfirmButton.Name = "downloadConfirmButton";
-            mainWindowInstance.RegisterName(downloadConfirmButton.Name, downloadConfirmButton);
+            MainWindow.GetInstance().RegisterName(downloadConfirmButton.Name, downloadConfirmButton);
 
             downloadGrid.Children.Add(videoTitleBlock);
             videoTitleBlock.VerticalAlignment = VerticalAlignment.Center;
@@ -277,7 +274,7 @@ namespace kpeg
             downloadProgressBar.Height = 30;
             downloadProgressBar.Value = 0;
             downloadProgressBar.VerticalAlignment = VerticalAlignment.Bottom;
-            downloadProgressBar.Foreground = mainWindowInstance.mainBrush;
+            downloadProgressBar.Foreground = MainWindow.GetInstance().mainBrush;
 
             downloadGrid.Children.Add(downloadProgressLabel);
             downloadProgressLabel.VerticalAlignment = VerticalAlignment.Bottom;
@@ -293,6 +290,10 @@ namespace kpeg
             return this.downloadBorder;
         }
 
+        public TextBlock GetVideoTitleBlock()
+        {
+            return this.videoTitleBlock;
+        }
         public Image GetVideoThumbnail()
         {
             return this.videoThumbnail;
@@ -365,22 +366,6 @@ namespace kpeg
             }
         }
 
-        private void updateYTDLP()
-        {
-            using (Process p = new Process())
-            {
-                ProcessStartInfo info = new ProcessStartInfo();
-                info.FileName = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "Resources/yt-dlp.exe");
-                info.Arguments = "-U";
-                info.CreateNoWindow = true;
-                info.UseShellExecute = false;
-                info.WorkingDirectory = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "Resources/");
-                p.StartInfo = info;
-                p.Start();
-                p.WaitForExit();
-                textBox_TextChanged(null,null);
-            }
-        }
         private void textBox2_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (textBox2.Text == "")
@@ -400,6 +385,7 @@ namespace kpeg
         }
         private void textBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            string url = textBox1.Text.Trim();
             if (textBox1.Text == "")
             {
                 ImageBrush textImageBrush = new ImageBrush();
@@ -412,11 +398,6 @@ namespace kpeg
             {
                 textBox1.Background = null;
             }
-
-            string url = textBox1.Text;
-            Utils.cleanupFiles();
-            Task.Run(()=>ThumbnailDownloader.GetInstance().UpdateThumbnail(url));
-
             if (!Utils.isLinkValid(url))
             {
                 downloadConfirmButton.IsEnabled = false;
@@ -425,56 +406,9 @@ namespace kpeg
                 return;
             }
 
-            if (Utils.isLinkValid(textBox1.Text))
-            {
-                downloadConfirmButton.IsEnabled = true;
-                System.Threading.Thread thread = new System.Threading.Thread(() =>
-                {
-                    mainWindowInstance.Dispatcher.Invoke((Action)(() =>
-                    {
-                        videoTitleBlock.Text = "";
-                    }));
-                    string videoName = getVideoName(url);
-                    bool updateNeeded = false;
-                    if (videoName.Contains("yt-dlp -U"))
-                        updateNeeded = true;
-                    mainWindowInstance.Dispatcher.Invoke((Action)(() =>
-                    {
-                        if(updateNeeded)
-                            videoTitleBlock.Text = "Update required. Please wait.";
-                        videoTitleBlock.Text = videoName;
-                    }));
-                    updateYTDLP();
-                });
-                thread.Start();
-            }
-        }
-        private string getVideoName(string url)
-        {
-            using (Process p = new Process())
-            {
-                ProcessStartInfo info = new ProcessStartInfo(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "Resources/yt-dlp.exe"), "--skip-download --print title " + Utils.trimListPart(url));
-                info.CreateNoWindow = true;
-                info.UseShellExecute = false;
-                info.RedirectStandardOutput = true;
-                info.RedirectStandardError = true;
-                info.WorkingDirectory = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "Resources/");
-                p.StartInfo = info;
-                string accumulated = "";
-                p.OutputDataReceived += new DataReceivedEventHandler((s, e) =>
-                {
-                    accumulated += e.Data + '\n';
-                });
-                p.ErrorDataReceived += new DataReceivedEventHandler((s, e) =>
-                {
-                    accumulated += e.Data + '\n';
-                });
-                p.Start();
-                p.BeginErrorReadLine();
-                p.BeginOutputReadLine();
-                p.WaitForExit();
-                return Utils.isPlayList(url) ? accumulated.Trim() + " (PLAYLIST)" : accumulated.Trim();
-            }
+            Task.Run(() => ThumbnailDownloader.GetInstance().UpdateThumbnail(url));
+            Task.Run(() => VideoNameDownloader.GetInstance().UpdateVideoName(url));
+
         }
         public TextBox getLinkBox()
         {
@@ -529,7 +463,7 @@ namespace kpeg
         }
         private void disableDownloadChildren()
         {
-            mainWindowInstance.Dispatcher.Invoke((Action)(() =>
+            MainWindow.GetInstance().Dispatcher.Invoke((Action)(() =>
             {
                 foreach (UIElement c in ((Grid)downloadBorder.Child).Children)
                 {
@@ -544,7 +478,7 @@ namespace kpeg
         }
         private void enableDownloadChildren()
         {
-            mainWindowInstance.Dispatcher.Invoke((Action)(() =>
+            MainWindow.GetInstance().Dispatcher.Invoke((Action)(() =>
             {
                 foreach (UIElement c in ((Grid)downloadBorder.Child).Children)
                 {
@@ -585,7 +519,7 @@ namespace kpeg
                 info.Arguments += " --no-mtime";
             if (downloadClip)
             {
-                mainWindowInstance.Dispatcher.Invoke((Action)(() =>
+                MainWindow.GetInstance().Dispatcher.Invoke((Action)(() =>
                 {
                     int from = int.Parse(startSecClipBox.Text) + int.Parse(startMinClipBox.Text) * 60 + int.Parse(startHourClipBox.Text) * 3600;
                     int to = int.Parse(endSecClipBox.Text) + int.Parse(endMinClipBox.Text) * 60 + int.Parse(endHourClipBox.Text) * 3600;
@@ -649,7 +583,7 @@ namespace kpeg
                 }
                 return (startingString, alternativeString);
             }
-            mainWindowInstance.Dispatcher.Invoke((Action)(() =>
+            MainWindow.GetInstance().Dispatcher.Invoke((Action)(() =>
             {
                 bool isfucked = str.Contains("frag");
                 if (progress < downloadProgressBar.Value && !isfucked)
@@ -661,7 +595,7 @@ namespace kpeg
                         downloadProgressBar.Foreground = System.Windows.Media.Brushes.Green;
                     else
                     {
-                        downloadProgressBar.Foreground = mainWindowInstance.mainBrush;
+                        downloadProgressBar.Foreground = MainWindow.GetInstance().mainBrush;
                     }
                 }
                 if (progress == 100 && startingString == "Downloading audio" && needsConversion && currentItem == maxItems)
