@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 
 namespace kpeg
 {
@@ -81,6 +83,18 @@ namespace kpeg
             else
             {
                 return link.Length >= link.IndexOf(linkType3) + 11 + linkType3.Length;
+            }
+        }
+        public static BitmapImage uriToSource(string path)
+        {
+            using (FileStream fs = new FileStream(path, FileMode.Open))
+            {
+                BitmapImage bitmapImage = new BitmapImage();
+                bitmapImage.BeginInit();
+                bitmapImage.StreamSource = fs;
+                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                bitmapImage.EndInit();
+                return bitmapImage;
             }
         }
     }

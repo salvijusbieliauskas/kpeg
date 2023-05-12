@@ -36,7 +36,15 @@ namespace kpeg
         public System.Windows.Media.Brush mainBrush = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#FFFD0009");
         int activeScreen = 0;//0 - starting screen; 1 - converter; 2 - downloader
         //int tempImageIndex = 0;
-        public MainWindow()
+        private static MainWindow mainWindowInstance = null;
+
+        public static MainWindow GetInstance()
+        {
+            if (mainWindowInstance == null)
+                mainWindowInstance = new MainWindow();
+            return mainWindowInstance;
+        }
+        private MainWindow()
         {
             InitializeComponent();
             //initialize components and their values
@@ -139,12 +147,7 @@ namespace kpeg
             Grid convertGrid = new Grid();
             convertBorder.Child = convertGrid;
 
-
-
-            DownloadWindow.getInstance(this).updateCheckBoxAccessibiity();
-            
-
-            me.Source = new Uri("Resources/ahri3.mp4", UriKind.Relative);
+            me.Source = new Uri("Resources/ahri.wmv", UriKind.Relative);
             me.Stretch = Stretch.Fill;
             me.LoadedBehavior = MediaState.Manual;
             me.Loaded += videoLoaded;
@@ -165,14 +168,14 @@ namespace kpeg
             }
             else if(activeScreen == 2)
             {
-                fadeControl(1.0, 0.0, 0.5, DownloadWindow.getInstance(this).getBorder().Name);
-                DownloadWindow.getInstance(this).getBorder().IsEnabled = false;
+                fadeControl(1.0, 0.0, 0.5, DownloadWindow.GetInstance().getBorder().Name);
+                DownloadWindow.GetInstance().getBorder().IsEnabled = false;
             }
         }
         private void copyLinkFromClipboard()
         {
             if (Utils.isLinkValid(Clipboard.GetText()))
-                DownloadWindow.getInstance(this).getLinkBox().Text = Clipboard.GetText();
+                DownloadWindow.GetInstance().getLinkBox().Text = Clipboard.GetText();
         }
         private void fadeInScreen(int screen, bool delayed)
         {
@@ -188,11 +191,11 @@ namespace kpeg
             else if(screen == 2)
             {
                 fadeOutCurrent();
-                DownloadWindow.getInstance(this).getBorder().IsEnabled = true;
+                DownloadWindow.GetInstance().getBorder().IsEnabled = true;
                 if (delayed)
-                    fadeControl(-1.0, 1.0, 1.0, DownloadWindow.getInstance(this).getBorder().Name);
+                    fadeControl(-1.0, 1.0, 1.0, DownloadWindow.GetInstance().getBorder().Name);
                 else
-                    fadeControl(0.0, 1.0, 0.5, DownloadWindow.getInstance(this).getBorder().Name);
+                    fadeControl(0.0, 1.0, 0.5, DownloadWindow.GetInstance().getBorder().Name);
                 copyLinkFromClipboard();
             }
             activeScreen = screen;
@@ -271,7 +274,7 @@ namespace kpeg
 
         private void windowActivated(object sender, EventArgs e)
         {
-            if (activeScreen == 2 && !Utils.isLinkValid(DownloadWindow.getInstance(this).getLinkBox().Text))
+            if (activeScreen == 2 && !Utils.isLinkValid(DownloadWindow.GetInstance().getLinkBox().Text))
                 copyLinkFromClipboard();
         }
     }

@@ -9,6 +9,8 @@ using System.Windows;
 using System.Diagnostics;
 using System.Windows.Media.Imaging;
 using System.IO;
+using System.Security.Policy;
+using kpeg.ProcessContainers;
 
 namespace kpeg
 {
@@ -29,7 +31,7 @@ namespace kpeg
         private CheckBox setDateModifiedToCurrentCheckBox = new CheckBox();
         private CheckBox clipVideoCheckBox = new CheckBox();
         private TextBlock videoTitleBlock = new TextBlock();
-        private System.Windows.Controls.Image videoThumbnail = new System.Windows.Controls.Image();
+        public System.Windows.Controls.Image videoThumbnail = new System.Windows.Controls.Image();
         private Button downloadConfirmButton = new Button();
         private bool downloadInProgress = false;
 
@@ -44,13 +46,13 @@ namespace kpeg
 
         private System.Threading.Thread downloadThread;
         private Process downloadProcess = null;
-        public static DownloadWindow getInstance(MainWindow mainWindow)
+        public static DownloadWindow GetInstance()
         {
             if (downloadWindowInstance == null)
-                downloadWindowInstance = new DownloadWindow(mainWindow);
+                downloadWindowInstance = new DownloadWindow();
             return downloadWindowInstance;
         }
-        private DownloadWindow(MainWindow mainWindowInstance)
+        private DownloadWindow()
         {
             this.mainWindowInstance = mainWindowInstance;
 
@@ -290,6 +292,11 @@ namespace kpeg
         {
             return this.downloadBorder;
         }
+
+        public Image GetVideoThumbnail()
+        {
+            return this.videoThumbnail;
+        }
         private void downloadDirectoryChanged(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.downloadDirectory = textBox2.Text;
@@ -357,20 +364,21 @@ namespace kpeg
                 }
             }
         }
-        private string downloadThumbnail(string url)
+
+        private void updateYTDLP()
         {
             using (Process p = new Process())
             {
                 ProcessStartInfo info = new ProcessStartInfo();
                 info.FileName = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "Resources/yt-dlp.exe");
-                info.Arguments = "--skip-download --write-thumbnail --output tmpimage --convert-thumbnails png " + Utils.trimListPart(url);
+                info.Arguments = "-U";
                 info.CreateNoWindow = true;
                 info.UseShellExecute = false;
                 info.WorkingDirectory = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "Resources/");
                 p.StartInfo = info;
                 p.Start();
                 p.WaitForExit();
-                return System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "Resources/tmpimage.png");
+                textBox_TextChanged(null,null);
             }
         }
         private void textBox2_TextChanged(object sender, TextChangedEventArgs e)
@@ -394,23 +402,32 @@ namespace kpeg
         {
             if (textBox1.Text == "")
             {
-
                 ImageBrush textImageBrush = new ImageBrush();
                 textImageBrush.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Resources/placeholder1.png"));
                 textImageBrush.AlignmentX = AlignmentX.Center;
                 textImageBrush.Stretch = Stretch.None;
-
                 textBox1.Background = textImageBrush;
             }
             else
             {
-
                 textBox1.Background = null;
             }
+
+            string url = textBox1.Text;
+            Utils.cleanupFiles();
+            Task.Run(()=>ThumbnailDownloader.GetInstance().UpdateThumbnail(url));
+
+            if (!Utils.isLinkValid(url))
+            {
+                downloadConfirmButton.IsEnabled = false;
+                videoTitleBlock.Text = "";
+                videoThumbnail.Source = null;
+                return;
+            }
+
             if (Utils.isLinkValid(textBox1.Text))
             {
                 downloadConfirmButton.IsEnabled = true;
-                string url = textBox1.Text;
                 System.Threading.Thread thread = new System.Threading.Thread(() =>
                 {
                     mainWindowInstance.Dispatcher.Invoke((Action)(() =>
@@ -418,47 +435,18 @@ namespace kpeg
                         videoTitleBlock.Text = "";
                     }));
                     string videoName = getVideoName(url);
+                    bool updateNeeded = false;
+                    if (videoName.Contains("yt-dlp -U"))
+                        updateNeeded = true;
                     mainWindowInstance.Dispatcher.Invoke((Action)(() =>
                     {
+                        if(updateNeeded)
+                            videoTitleBlock.Text = "Update required. Please wait.";
                         videoTitleBlock.Text = videoName;
                     }));
-                });
-                System.Threading.Thread thread2 = new System.Threading.Thread(() =>
-                {
-                    mainWindowInstance.Dispatcher.Invoke((Action)(() =>
-                    {
-                        videoThumbnail.Source = null;
-                    }));
-                    Utils.cleanupFiles();
-                    string path = downloadThumbnail(url);
-                    mainWindowInstance.Dispatcher.Invoke((Action)(() =>
-                    {
-                        if (System.IO.File.Exists(path))
-                        {
-                            videoThumbnail.Source = uriToSource(path);
-                        }
-                    }));
+                    updateYTDLP();
                 });
                 thread.Start();
-                thread2.Start();
-            }
-            else
-            {
-                downloadConfirmButton.IsEnabled = false;
-                videoTitleBlock.Text = "";
-                videoThumbnail.Source = null;
-            }
-        }
-        private BitmapImage uriToSource(string path)
-        {
-            using (FileStream fs = new FileStream(path, FileMode.Open))
-            {
-                BitmapImage bitmapImage = new BitmapImage();
-                bitmapImage.BeginInit();
-                bitmapImage.StreamSource = fs;
-                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
-                bitmapImage.EndInit();
-                return bitmapImage;
             }
         }
         private string getVideoName(string url)

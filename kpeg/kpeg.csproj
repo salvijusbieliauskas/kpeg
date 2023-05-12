@@ -70,6 +70,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ConvertWindow.cs" />
+    <Compile Include="ProcessContainers\ThumbnailDownloader.cs" />
+    <Compile Include="ProcessContainers\VideoNameDownloader.cs" />
     <Compile Include="Utils.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -113,7 +115,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\ahri3.mp4">
+    <Content Include="Resources\ahri.wmv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\ffmpeg.exe">
@@ -127,6 +129,7 @@
     </Content>
     <Resource Include="Resources\placeholder1.png" />
     <Resource Include="Resources\placeholder2.png" />
+    <Resource Include="Resources\thumbnailDownloading.png" />
     <Content Include="Resources\yt-dlp.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -135,6 +138,7 @@
     <Resource Include="Resources\minimizebutton.png" />
     <Resource Include="Resources\top.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\MaterialDesignThemes.4.7.0\build\MaterialDesignThemes.targets" Condition="Exists('..\packages\MaterialDesignThemes.4.7.0\build\MaterialDesignThemes.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
