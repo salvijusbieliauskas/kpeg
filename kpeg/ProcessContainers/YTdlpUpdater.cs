@@ -50,10 +50,7 @@ namespace kpeg.ProcessContainers
                 p.BeginErrorReadLine();
                 p.BeginOutputReadLine();
                 p.WaitForExit();
-                if (output.Contains("Updated"))
-                    return true;
-                else
-                    return false;
+                return output.Contains("Updated");
             }
         }
 

@@ -83,13 +83,11 @@ namespace kpeg.ProcessContainers
                 {
                     (messageString, audioString) = processDownloadProgressString(e.Data, audioOnly, messageString,
                         audioString, (audioOnly && convertToMp3) || (!audioOnly && convertToMp4), isPlaylist);
-                    System.Diagnostics.Debug.WriteLine(e.Data);
                 });
                 p.ErrorDataReceived += new DataReceivedEventHandler((s, e) =>
                 {
                     (messageString, audioString) = processDownloadProgressString(e.Data, audioOnly, messageString,
                         audioString, (audioOnly && convertToMp3) || (!audioOnly && convertToMp4), isPlaylist);
-                    System.Diagnostics.Debug.WriteLine(e.Data);
                 });
                 p.Start();
                 p.BeginErrorReadLine();
@@ -120,9 +118,6 @@ namespace kpeg.ProcessContainers
             }
             MainWindow.GetInstance().Dispatcher.Invoke((Action)(() =>
             {
-                //bool reallybad = str.Contains("frag");
-                //if (progress < DownloadWindow.GetInstance().GetProgressBar().Value && !reallybad)
-                //    (startingString, alternativeString) = (alternativeString, startingString);
                 if (progress < DownloadWindow.GetInstance().GetProgressBar().Value)
                     (startingString, alternativeString) = (alternativeString, startingString);
                 DownloadWindow.GetInstance().GetProgressBar().Value = progress;
@@ -137,19 +132,12 @@ namespace kpeg.ProcessContainers
                 }
                 if (progress == 100 && startingString == "Downloading audio" && needsConversion && currentItem == maxItems)
                     startingString = "Converting";
-                //if (!reallybad)
-                //{
-                    DownloadWindow.GetInstance().GetProgressBarLabel().Content = startingString;
-                    if (isPlaylist)
-                    {
-                        if (currentItem > 0 && maxItems > 0)
-                            DownloadWindow.GetInstance().GetProgressBarLabel().Content += string.Format(" (item {0} of {1})", currentItem, maxItems);//TODO: green doesnt work, converting text does not work
-                    }
-                //}
-                //else
-                //{
-                //    DownloadWindow.GetInstance().GetProgressBarLabel().Content = "Video is fragmented, no details can be obtained";
-                //}
+                DownloadWindow.GetInstance().GetProgressBarLabel().Content = startingString;
+                if (isPlaylist)
+                {
+                    if (currentItem > 0 && maxItems > 0)
+                        DownloadWindow.GetInstance().GetProgressBarLabel().Content += string.Format(" (item {0} of {1})", currentItem, maxItems);//TODO: green doesnt work, converting text does not work
+                }
             }));
             return (startingString, alternativeString);
         }
