@@ -71,6 +71,7 @@
     </ApplicationDefinition>
     <Compile Include="ConvertWindow.cs" />
     <Compile Include="ProcessContainers\ThumbnailDownloader.cs" />
+    <Compile Include="ProcessContainers\VideoDownloader.cs" />
     <Compile Include="ProcessContainers\VideoNameDownloader.cs" />
     <Compile Include="ProcessContainers\YTdlpUpdater.cs" />
     <Compile Include="Utils.cs" />

@@ -30,7 +30,7 @@ namespace kpeg.ProcessContainers
         private bool Cancelled = false;
         private async Task GetVideoName(string url)
         {
-            Cancelled = false;
+            CurrentURL = url;
             using (Process p = new Process())
             {
                 ProcessStartInfo info = new ProcessStartInfo(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "Resources/yt-dlp.exe"), "--skip-download --print title " + Utils.trimListPart(url));
@@ -54,14 +54,27 @@ namespace kpeg.ProcessContainers
                 p.BeginOutputReadLine();
                 p.WaitForExit();
                 if (Cancelled)
+                {
                     return;
+                }
+
                 if (accumulated.Contains("yt-dlp -U"))
                 {
                     Application.Current.Dispatcher.Invoke(new Action(() => { DownloadWindow.GetInstance().GetVideoTitleBlock().Text = "Update required. Please wait."; }));
-                    await YTdlpUpdater.GetInstance().updateYTDLP();
+                    await YTdlpUpdater.GetInstance().UpdateYTDLP();
                     await GetVideoName(url);
+                    ThumbnailDownloader.GetInstance().UpdateThumbnail(url);
+                    CurrentURL = "";
                     return;
                 }
+
+                if (accumulated.StartsWith("ERROR:"))
+                {
+                    Application.Current.Dispatcher.Invoke(new Action(() => { DownloadWindow.GetInstance().GetVideoTitleBlock().Text = "Invalid video. Could not retrieve data."; }));
+                    CurrentURL = "";
+                    return;
+                }
+
 
                 if (accumulated.StartsWith("WARNING") && accumulated.Contains(".js"))
                     accumulated = accumulated.Substring(accumulated.IndexOf(".js") + 3);
@@ -75,17 +88,33 @@ namespace kpeg.ProcessContainers
                 Application.Current.Dispatcher.Invoke(new Action(() => { DownloadWindow.GetInstance().GetVideoTitleBlock().Text = ""; }));
                 return;
             }
+
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                if (DownloadWindow.GetInstance().videoThumbnail.Source == null && DownloadWindow.GetInstance().GetVideoTitleBlock().Text ==  "")
+                    CurrentURL = "";
+            }));
             if (CurrentURL == url)
                 return;
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
                 DownloadWindow.GetInstance().GetVideoTitleBlock().Text = "Fetching name...";
             }));
-            if (videoNameDownloadTask.Status == TaskStatus.Running)
+            if (videoNameDownloadTask.Status != TaskStatus.RanToCompletion && videoNameDownloadTask.Status != TaskStatus.Created)
             {
                 Cancelled = true;
-                System.Diagnostics.Debug.WriteLine("yea");
                 videoNameDownloadTask.Wait();
+                Cancelled = false;
+                await UpdateVideoName(url);
+                return;
+            }
+
+            if (YTdlpUpdater.GetInstance().GetTask().Status != TaskStatus.RanToCompletion &&
+                YTdlpUpdater.GetInstance().GetTask().Status != TaskStatus.Created)
+            {
+                YTdlpUpdater.GetInstance().GetTask().Wait();
+                await UpdateVideoName(url);
+                return;
             }
             videoNameDownloadTask = Task.Run(() => GetVideoName(url));
         }

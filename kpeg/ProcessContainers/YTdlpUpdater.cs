@@ -57,7 +57,7 @@ namespace kpeg.ProcessContainers
             }
         }
 
-        public async Task updateYTDLP()
+        public async Task UpdateYTDLP()
         {
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
@@ -73,6 +73,11 @@ namespace kpeg.ProcessContainers
                 }));
             else
                 throw new Exception("Update failure");
+        }
+
+        public Task GetTask()
+        {
+            return YTdlpUpdateTask;
         }
     }
 }

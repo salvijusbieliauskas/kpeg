@@ -54,11 +54,15 @@ namespace kpeg.ProcessContainers
                 p.BeginErrorReadLine();
                 p.BeginOutputReadLine();
                 p.WaitForExit();
+                if (accumulated.Contains("ERROR: [youtube]"))
+                {
+                    Application.Current.Dispatcher.Invoke(new Action(() => { DownloadWindow.GetInstance().GetVideoThumbnail().Source = null; }));
+                    CurrentURL = "";
+                    return;
+                }
                 if (accumulated.Contains("yt-dlp -U"))
                 {
-                    Application.Current.Dispatcher.Invoke(new Action(() => { DownloadWindow.GetInstance().GetVideoTitleBlock().Text = "Update required. Please wait."; }));
-                    await YTdlpUpdater.GetInstance().updateYTDLP();
-                    await GetThumbnail(url);
+                    CurrentURL = "";
                     return;
                 }
                 if (!Cancelled)
@@ -78,14 +82,28 @@ namespace kpeg.ProcessContainers
                 Application.Current.Dispatcher.Invoke(new Action(() => { DownloadWindow.GetInstance().GetVideoThumbnail().Source = null; }));
                 return;
             }
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                if (DownloadWindow.GetInstance().videoThumbnail.Source == null && DownloadWindow.GetInstance().GetVideoTitleBlock().Text == "")
+                    CurrentURL = "";
+            }));
             if (CurrentURL == url)
                 return;
-            if (thumbnailDownloadTask.Status == TaskStatus.Running)
+            if (thumbnailDownloadTask.Status != TaskStatus.RanToCompletion && thumbnailDownloadTask.Status != TaskStatus.Created)
             {
                 Cancelled = true;
                 thumbnailDownloadTask.Wait();
+                Cancelled = false;
+                await UpdateThumbnail(url);
+                return;
             }
-
+            if (YTdlpUpdater.GetInstance().GetTask().Status != TaskStatus.RanToCompletion &&
+                YTdlpUpdater.GetInstance().GetTask().Status != TaskStatus.Created)
+            {
+                YTdlpUpdater.GetInstance().GetTask().Wait();
+                await UpdateThumbnail(url);
+                return;
+            }
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
                 DownloadWindow.GetInstance().GetVideoThumbnail().Source =

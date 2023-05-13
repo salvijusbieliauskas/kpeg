@@ -44,7 +44,6 @@ namespace kpeg
         private TextBox endHourClipBox = new TextBox();
 
         private System.Threading.Thread downloadThread;
-        private Process downloadProcess = null;
         public static DownloadWindow GetInstance()
         {
             if (downloadWindowInstance == null)
@@ -194,20 +193,6 @@ namespace kpeg
             endMinClipBox.TextChanged += timeBoxChanged;
             endHourClipBox.TextChanged += timeBoxChanged;
 
-            //startSecClipBox.GotFocus += timeBoxFocused;
-            //startMinClipBox.TextChanged += timeBoxFocused;
-            //startHourClipBox.TextChanged += timeBoxFocused;
-            //endSecClipBox.TextChanged += timeBoxFocused;
-            //endMinClipBox.TextChanged += timeBoxFocused;
-            //endHourClipBox.TextChanged += timeBoxFocused;
-
-            //startSecClipBox.MaxLength = 2;
-            //startMinClipBox.MaxLength = 2;
-            //startHourClipBox.MaxLength = 2;
-            //endSecClipBox.MaxLength = 2;
-            //endMinClipBox.MaxLength = 2;
-            //endHourClipBox.MaxLength = 2;
-
             startSecClipBox.Text = "00";
             startMinClipBox.Text = "00";
             startHourClipBox.Text = "00";
@@ -297,6 +282,39 @@ namespace kpeg
         public Image GetVideoThumbnail()
         {
             return this.videoThumbnail;
+        }
+        public TextBox GetStartSecBox()
+        {
+            return startSecClipBox;
+        }
+        public TextBox GetStartMinBox()
+        {
+            return startMinClipBox;
+        }
+        public TextBox GetStartHourBox()
+        {
+            return startHourClipBox;
+        }
+        public TextBox GetEndSecBox()
+        {
+            return endSecClipBox;
+        }
+        public TextBox GetEndMinBox()
+        {
+            return endMinClipBox;
+        }
+        public TextBox GetEndHourBox()
+        {
+            return endHourClipBox;
+        }
+
+        public ProgressBar GetProgressBar()
+        {
+            return downloadProgressBar;
+        }
+        public Label GetProgressBarLabel()
+        {
+            return downloadProgressLabel;
         }
         private void downloadDirectoryChanged(object sender, RoutedEventArgs e)
         {
@@ -405,6 +423,7 @@ namespace kpeg
                 videoThumbnail.Source = null;
                 return;
             }
+            downloadConfirmButton.IsEnabled = true;
 
             Task.Run(() => ThumbnailDownloader.GetInstance().UpdateThumbnail(url));
             Task.Run(() => VideoNameDownloader.GetInstance().UpdateVideoName(url));
@@ -425,28 +444,9 @@ namespace kpeg
                 MessageBox.Show("Invalid directory.");
                 return;
             }
-            if (downloadInProgress)
-            {
-                downloadThread.Abort();
-                if (downloadProcess != null)
-                {
-                    downloadProcess.Kill();
-                    downloadProcess.Dispose();
-                    downloadProcess.Close();
-                    downloadProcess = null;
-                }
-                foreach (Process proc in (from p in Process.GetProcesses() where p.ProcessName == "yt-dlp" select p))
-                {
-                    proc.Kill();
-                }
-                enableDownloadChildren();
-                return;
-            }
-            downloadProgressBar.Value = 0;
-            downloadProcess = new Process();
+
             string url = textBox1.Text;
-            downloadThread = new System.Threading.Thread(() => downloadVideo(url, downloadProcess));
-            downloadThread.Start();
+            Task.Run(() => VideoDownloader.GetInstance().DownloadVideo(url));
         }
         public void updateCheckBoxAccessibiity()
         {
@@ -461,7 +461,7 @@ namespace kpeg
             convertToMp3CheckBox.IsEnabled = audioOnlyCheckBox.IsChecked.Value;
             clipVideoSpanPanel.IsEnabled = clipVideoCheckBox.IsChecked.Value;
         }
-        private void disableDownloadChildren()
+        public void DisableDownloadChildren()
         {
             MainWindow.GetInstance().Dispatcher.Invoke((Action)(() =>
             {
@@ -473,10 +473,11 @@ namespace kpeg
                     }
                 }
                 downloadInProgress = true;
-                downloadConfirmButton.Content = "Cancel";
+                downloadConfirmButton.Content = "Downloading...";
+                downloadConfirmButton.IsEnabled = false;
             }));
         }
-        private void enableDownloadChildren()
+        public void EnableDownloadChildren()
         {
             MainWindow.GetInstance().Dispatcher.Invoke((Action)(() =>
             {
@@ -489,132 +490,10 @@ namespace kpeg
                 }
                 downloadInProgress = false;
                 downloadConfirmButton.Content = "Download";
+                downloadConfirmButton.IsEnabled = true;
                 downloadProgressLabel.Content = "";
                 updateCheckBoxAccessibiity();
             }));
-        }
-        int currentItem = 0, maxItems = 0;
-        private void downloadVideo(string url, Process p)
-        {
-            disableDownloadChildren();
-            Properties.Settings.Default.Save();
-            ProcessStartInfo info = new ProcessStartInfo();
-            info.FileName = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\Resources\\yt-dlp.exe";
-            bool audioOnly = Properties.Settings.Default.downloadAudioOnly;
-            bool openDirectory = Properties.Settings.Default.openDirectoryAfterDownload;
-            bool convertToMp3 = Properties.Settings.Default.downloadAudioAsMp3;
-            bool convertToMp4 = Properties.Settings.Default.convertToMp4;
-            bool isPlaylist = Utils.isPlayList(url);
-            bool downloadClip = Properties.Settings.Default.downloadClip;
-            info.Arguments = "";
-            if (audioOnly)
-            {
-                info.Arguments += "-f \"bestaudio\" -x";
-                if (convertToMp3)
-                    info.Arguments += " --audio-format wav";
-            }
-            else if (convertToMp4)
-                info.Arguments += " -f \"bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best\"";
-            if (Properties.Settings.Default.setModifiedDate)
-                info.Arguments += " --no-mtime";
-            if (downloadClip)
-            {
-                MainWindow.GetInstance().Dispatcher.Invoke((Action)(() =>
-                {
-                    int from = int.Parse(startSecClipBox.Text) + int.Parse(startMinClipBox.Text) * 60 + int.Parse(startHourClipBox.Text) * 3600;
-                    int to = int.Parse(endSecClipBox.Text) + int.Parse(endMinClipBox.Text) * 60 + int.Parse(endHourClipBox.Text) * 3600;
-
-                    info.Arguments += string.Format(" --download-sections \"*{0}-{1}\"", from, to);
-                }));
-            }
-            info.Arguments += " " + url;
-            System.Diagnostics.Debug.WriteLine(info.Arguments);
-            info.WorkingDirectory = Properties.Settings.Default.downloadDirectory;
-            info.CreateNoWindow = true;
-            info.UseShellExecute = false;
-            info.RedirectStandardOutput = true;
-            info.RedirectStandardError = true;
-            p.StartInfo = info;
-            string messageString, alternativeString;
-            string audioString = "Downloading audio";
-            string videoString = "Downloading video";
-            if (audioOnly)
-            {
-                messageString = audioString;
-                alternativeString = audioString;
-            }
-            else
-            {
-                messageString = videoString;
-                alternativeString = audioString;
-            }
-            p.OutputDataReceived += new DataReceivedEventHandler((s, e) =>
-            {
-                System.Diagnostics.Debug.WriteLine(e.Data);
-                (messageString, audioString) = processDownloadProgressString(e.Data, audioOnly, messageString, audioString, (audioOnly && convertToMp3) || (!audioOnly && convertToMp4), isPlaylist);
-            });
-            p.ErrorDataReceived += new DataReceivedEventHandler((s, e) =>
-            {
-                System.Diagnostics.Debug.WriteLine(e.Data);
-                (messageString, audioString) = processDownloadProgressString(e.Data, audioOnly, messageString, audioString, (audioOnly && convertToMp3) || (!audioOnly && convertToMp4), isPlaylist);
-            });
-            p.Start();
-            p.BeginErrorReadLine();
-            p.BeginOutputReadLine();
-            while (!p.HasExited) { }
-            enableDownloadChildren();
-            p.Dispose();
-            if (openDirectory)
-                Process.Start(info.WorkingDirectory);
-        }
-        private (string, string) processDownloadProgressString(string str, bool audioOnly, string startingString, string alternativeString, bool needsConversion, bool isPlaylist)
-        {
-            if (str == null)
-                return (startingString, alternativeString);
-            double progress = Utils.downloadProgressStringToDouble(str);
-            if (progress == -1)
-            {
-                if (str.Contains("[download] Downloading item "))
-                {
-                    int ofIndex = str.IndexOf(" of ");
-                    maxItems = int.Parse(str.Substring(ofIndex + 4));
-                    int itemIndex = str.IndexOf("item");
-                    currentItem = int.Parse(str.Substring(itemIndex + 4, str.Length - itemIndex - 4 - (str.Length - ofIndex)));
-                }
-                return (startingString, alternativeString);
-            }
-            MainWindow.GetInstance().Dispatcher.Invoke((Action)(() =>
-            {
-                bool isfucked = str.Contains("frag");
-                if (progress < downloadProgressBar.Value && !isfucked)
-                    (startingString, alternativeString) = (alternativeString, startingString);
-                downloadProgressBar.Value = progress;
-                if (!isPlaylist && currentItem == maxItems)
-                {
-                    if (progress == 100)
-                        downloadProgressBar.Foreground = System.Windows.Media.Brushes.Green;
-                    else
-                    {
-                        downloadProgressBar.Foreground = MainWindow.GetInstance().mainBrush;
-                    }
-                }
-                if (progress == 100 && startingString == "Downloading audio" && needsConversion && currentItem == maxItems)
-                    startingString = "Converting";
-                if (!isfucked)
-                {
-                    downloadProgressLabel.Content = startingString;
-                    if (isPlaylist)
-                    {
-                        if (currentItem > 0 && maxItems > 0)
-                            downloadProgressLabel.Content += string.Format(" (item {0} of {1})", currentItem, maxItems);//TODO: green doesnt work, converting text does not work
-                    }
-                }
-                else
-                {
-                    downloadProgressLabel.Content = "Video is fragmented, no details can be obtained";
-                }
-            }));
-            return (startingString, alternativeString);
         }
     }
 }
