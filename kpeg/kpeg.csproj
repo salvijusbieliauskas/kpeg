@@ -46,6 +46,9 @@
     <Reference Include="Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Xaml.Behaviors.Wpf.1.1.39\lib\net45\Microsoft.Xaml.Behaviors.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -69,12 +72,40 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ConvertWindow.cs" />
-    <Compile Include="ProcessContainers\ThumbnailDownloader.cs" />
-    <Compile Include="ProcessContainers\VideoDownloader.cs" />
-    <Compile Include="ProcessContainers\VideoNameDownloader.cs" />
-    <Compile Include="ProcessContainers\YTdlpUpdater.cs" />
+    <Compile Include="Conversion\ConvertWindow.xaml.cs">
+      <DependentUpon>ConvertWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Conversion\GIFConversionPanel.xaml.cs">
+      <DependentUpon>GIFConversionPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Conversion\ImageConversionPanel.xaml.cs">
+      <DependentUpon>ImageConversionPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Conversion\VideoConversionPanel.xaml.cs">
+      <DependentUpon>VideoConversionPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Downloading\ProcessContainers\ThumbnailDownloader.cs" />
+    <Compile Include="Downloading\ProcessContainers\VideoDownloader.cs" />
+    <Compile Include="Downloading\ProcessContainers\VideoNameDownloader.cs" />
+    <Compile Include="Downloading\ProcessContainers\YTdlpUpdater.cs" />
+    <Compile Include="SettingsManager.cs" />
     <Compile Include="Utils.cs" />
+    <Page Include="Conversion\GIFConversionPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Conversion\ImageConversionPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Conversion\VideoConversionPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Conversion\ConvertWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -83,7 +114,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DownloadWindow.cs" />
+    <Compile Include="Downloading\DownloadWindow.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

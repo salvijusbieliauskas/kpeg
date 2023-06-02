@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace kpeg.ProcessContainers
+namespace kpeg.Downloading.ProcessContainers
 {
     public class YTdlpUpdater
     {

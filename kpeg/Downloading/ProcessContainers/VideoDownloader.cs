@@ -1,40 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
+﻿using System.Diagnostics;
+using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
-using System.Windows;
+using System.Windows.Media;
+using kpeg.Properties;
 
-namespace kpeg.ProcessContainers
+namespace kpeg.Downloading.ProcessContainers
 {
     public class VideoDownloader
     {
         private static VideoDownloader VideoDownloaderInstance;
+        private int currentItem, maxItems;
+        private readonly string CurrentURL = string.Empty;
         private Task VideoDownloadTask;
+
         private VideoDownloader()
         {
             VideoDownloadTask = new Task(() => { });
         }
+
         public static VideoDownloader GetInstance()
         {
-            if(VideoDownloaderInstance == null)
+            if (VideoDownloaderInstance == null)
                 VideoDownloaderInstance = new VideoDownloader();
             return VideoDownloaderInstance;
         }
-        private string CurrentURL = string.Empty;
+
         private async Task DownloadVideoTask(string url)
         {
             DownloadWindow.GetInstance().DisableDownloadChildren();
-            Properties.Settings.Default.Save();
+            Settings.Default.Save();
             ProcessStartInfo info = new ProcessStartInfo();
-            info.FileName = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\Resources\\yt-dlp.exe";
-            bool audioOnly = Properties.Settings.Default.downloadAudioOnly;
-            bool openDirectory = Properties.Settings.Default.openDirectoryAfterDownload;
-            bool convertToMp3 = Properties.Settings.Default.downloadAudioAsMp3;
-            bool convertToMp4 = Properties.Settings.Default.convertToMp4;
+            info.FileName = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Resources\\yt-dlp.exe";
+            bool audioOnly = (bool)SettingsManager.Get("downloadAudioOnly");
+            bool openDirectory = (bool)SettingsManager.Get("openDirectoryAfterDownload");
+            bool convertToMp3 = (bool)SettingsManager.Get("downloadAudioAsMp3");
+            bool convertToMp4 = (bool)SettingsManager.Get("convertToMp4");
             bool isPlaylist = Utils.isPlayList(url);
-            bool downloadClip = Properties.Settings.Default.downloadClip;
+            bool downloadClip = (bool)SettingsManager.Get("downloadClip");
             info.Arguments = "";
             if (audioOnly)
             {
@@ -43,21 +46,26 @@ namespace kpeg.ProcessContainers
                     info.Arguments += " --audio-format wav";
             }
             else if (convertToMp4)
+            {
                 info.Arguments += " -f \"bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best\"";
-            if (Properties.Settings.Default.setModifiedDate)
+            }
+
+            if ((bool)SettingsManager.Get("setModifiedDate"))
                 info.Arguments += " --no-mtime";
             if (downloadClip)
-            {
-                MainWindow.GetInstance().Dispatcher.Invoke((Action)(() =>
+                MainWindow.GetInstance().Dispatcher.Invoke(() =>
                 {
-                    int from = int.Parse(DownloadWindow.GetInstance().GetStartSecBox().Text) + int.Parse(DownloadWindow.GetInstance().GetStartMinBox().Text) * 60 + int.Parse(DownloadWindow.GetInstance().GetStartHourBox().Text) * 3600;
-                    int to = int.Parse(DownloadWindow.GetInstance().GetEndSecBox().Text) + int.Parse(DownloadWindow.GetInstance().GetEndMinBox().Text) * 60 + int.Parse(DownloadWindow.GetInstance().GetEndHourBox().Text) * 3600;
+                    int from = int.Parse(DownloadWindow.GetInstance().GetStartSecBox().Text) +
+                               int.Parse(DownloadWindow.GetInstance().GetStartMinBox().Text) * 60 +
+                               int.Parse(DownloadWindow.GetInstance().GetStartHourBox().Text) * 3600;
+                    int to = int.Parse(DownloadWindow.GetInstance().GetEndSecBox().Text) +
+                             int.Parse(DownloadWindow.GetInstance().GetEndMinBox().Text) * 60 +
+                             int.Parse(DownloadWindow.GetInstance().GetEndHourBox().Text) * 3600;
 
                     info.Arguments += string.Format(" --download-sections \"*{0}-{1}\"", from, to);
-                }));
-            }
+                });
             info.Arguments += " " + url;
-            info.WorkingDirectory = Properties.Settings.Default.downloadDirectory;
+            info.WorkingDirectory = (string)SettingsManager.Get("downloadDirectory");
             info.CreateNoWindow = true;
             info.UseShellExecute = false;
             info.RedirectStandardOutput = true;
@@ -79,16 +87,16 @@ namespace kpeg.ProcessContainers
                     alternativeString = audioString;
                 }
 
-                p.OutputDataReceived += new DataReceivedEventHandler((s, e) =>
+                p.OutputDataReceived += (s, e) =>
                 {
                     (messageString, audioString) = processDownloadProgressString(e.Data, audioOnly, messageString,
                         audioString, (audioOnly && convertToMp3) || (!audioOnly && convertToMp4), isPlaylist);
-                });
-                p.ErrorDataReceived += new DataReceivedEventHandler((s, e) =>
+                };
+                p.ErrorDataReceived += (s, e) =>
                 {
                     (messageString, audioString) = processDownloadProgressString(e.Data, audioOnly, messageString,
                         audioString, (audioOnly && convertToMp3) || (!audioOnly && convertToMp4), isPlaylist);
-                });
+                };
                 p.Start();
                 p.BeginErrorReadLine();
                 p.BeginOutputReadLine();
@@ -99,8 +107,9 @@ namespace kpeg.ProcessContainers
             if (openDirectory)
                 Process.Start(info.WorkingDirectory);
         }
-        private int currentItem = 0, maxItems = 0;
-        private (string, string) processDownloadProgressString(string str, bool audioOnly, string startingString, string alternativeString, bool needsConversion, bool isPlaylist)
+
+        private (string, string) processDownloadProgressString(string str, bool audioOnly, string startingString,
+            string alternativeString, bool needsConversion, bool isPlaylist)
         {
             if (str == null)
                 return (startingString, alternativeString);
@@ -112,11 +121,14 @@ namespace kpeg.ProcessContainers
                     int ofIndex = str.IndexOf(" of ");
                     maxItems = int.Parse(str.Substring(ofIndex + 4));
                     int itemIndex = str.IndexOf("item");
-                    currentItem = int.Parse(str.Substring(itemIndex + 4, str.Length - itemIndex - 4 - (str.Length - ofIndex)));
+                    currentItem = int.Parse(str.Substring(itemIndex + 4,
+                        str.Length - itemIndex - 4 - (str.Length - ofIndex)));
                 }
+
                 return (startingString, alternativeString);
             }
-            MainWindow.GetInstance().Dispatcher.Invoke((Action)(() =>
+
+            MainWindow.GetInstance().Dispatcher.Invoke(() =>
             {
                 if (progress < DownloadWindow.GetInstance().GetProgressBar().Value)
                     (startingString, alternativeString) = (alternativeString, startingString);
@@ -124,32 +136,31 @@ namespace kpeg.ProcessContainers
                 if (!isPlaylist && currentItem == maxItems)
                 {
                     if (progress == 100)
-                        DownloadWindow.GetInstance().GetProgressBar().Foreground = System.Windows.Media.Brushes.Green;
+                        DownloadWindow.GetInstance().GetProgressBar().Foreground = Brushes.Green;
                     else
-                    {
                         DownloadWindow.GetInstance().GetProgressBar().Foreground = MainWindow.GetInstance().mainBrush;
-                    }
                 }
-                if (progress == 100 && startingString == "Downloading audio" && needsConversion && currentItem == maxItems)
+
+                if (progress == 100 && startingString == "Downloading audio" && needsConversion &&
+                    currentItem == maxItems)
                     startingString = "Converting";
                 DownloadWindow.GetInstance().GetProgressBarLabel().Content = startingString;
                 if (isPlaylist)
-                {
                     if (currentItem > 0 && maxItems > 0)
-                        DownloadWindow.GetInstance().GetProgressBarLabel().Content += string.Format(" (item {0} of {1})", currentItem, maxItems);//TODO: green doesnt work, converting text does not work
-                }
-            }));
+                        DownloadWindow.GetInstance().GetProgressBarLabel().Content +=
+                            string.Format(" (item {0} of {1})", currentItem,
+                                maxItems); //TODO: green doesnt work, converting text does not work
+            });
             return (startingString, alternativeString);
         }
+
         public async Task DownloadVideo(string url)
         {
-            if (!Utils.isLinkValid(url))
-            {
-                return;
-            }
+            if (!Utils.isLinkValid(url)) return;
             if (CurrentURL == url)
                 return;
-            if (VideoDownloadTask.Status != TaskStatus.RanToCompletion && VideoDownloadTask.Status != TaskStatus.Created)
+            if (VideoDownloadTask.Status != TaskStatus.RanToCompletion &&
+                VideoDownloadTask.Status != TaskStatus.Created)
             {
                 VideoDownloadTask.Wait();
                 await DownloadVideo(url);
@@ -163,6 +174,7 @@ namespace kpeg.ProcessContainers
                 await DownloadVideo(url);
                 return;
             }
+
             VideoDownloadTask = Task.Run(() => DownloadVideoTask(url));
         }
     }

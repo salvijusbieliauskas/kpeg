@@ -18,6 +18,8 @@ using System.Windows.Controls;
 using System.Windows.Media.Animation;
 using System.Diagnostics;
 using System.Security.Policy;
+using kpeg.Conversion;
+using kpeg.Downloading;
 using Microsoft.Win32;
 
 namespace kpeg
@@ -118,6 +120,7 @@ namespace kpeg
             convertButton.Width = 200;
             convertButton.Height = 50;
             convertButton.Background = mainBrush;
+            convertButton.Click += convertClicked;
             convertButton.Content = "Convert";
 
             MaterialDesignThemes.Wpf.ElevationAssist.SetElevation(convertButton, MaterialDesignThemes.Wpf.Elevation.Dp24);
@@ -163,13 +166,19 @@ namespace kpeg
         {
             if (activeScreen == 0)
             {
-                fadeControl(1.0, 0.0, 0.5, startingBorder.Name);
+                FadeControl(1.0, 0.0, 0.5, startingBorder.Name);
                 startingBorder.IsEnabled = false;
+            }
+            else if (activeScreen == 1)
+            {
+                FadeControl(1.0, 0.0, 0.5, ConvertWindow.GetInstance().Name);
+                ConvertWindow.GetInstance().IsEnabled = false;
+                ConvertWindow.GetInstance().IsHitTestVisible = false;
             }
             else if(activeScreen == 2)
             {
-                fadeControl(1.0, 0.0, 0.5, DownloadWindow.GetInstance().getBorder().Name);
-                DownloadWindow.GetInstance().getBorder().IsEnabled = false;
+                FadeControl(1.0, 0.0, 0.5, DownloadWindow.GetInstance().GetBorder().Name);
+                DownloadWindow.GetInstance().GetBorder().IsEnabled = false;
             }
         }
         private void copyLinkFromClipboard()
@@ -184,18 +193,28 @@ namespace kpeg
                 fadeOutCurrent();
                 startingBorder.IsEnabled = true;
                 if (delayed)
-                    fadeControl(-1.0, 1.0, 1.0, startingBorder.Name);
+                    FadeControl(-1.0, 1.0, 1.0, startingBorder.Name);
                 else
-                    fadeControl(0.0, 1.0, 0.5, startingBorder.Name);
+                    FadeControl(0.0, 1.0, 0.5, startingBorder.Name);
+            }
+            else if (screen == 1)
+            {
+                fadeOutCurrent();
+                ConvertWindow.GetInstance().IsEnabled = true;
+                ConvertWindow.GetInstance().IsHitTestVisible = true;
+                if (delayed)
+                    FadeControl(-1.0, 1.0, 1.0, ConvertWindow.GetInstance().Name);
+                else
+                    FadeControl(0.0, 1.0, 0.5, ConvertWindow.GetInstance().Name);
             }
             else if(screen == 2)
             {
                 fadeOutCurrent();
-                DownloadWindow.GetInstance().getBorder().IsEnabled = true;
+                DownloadWindow.GetInstance().GetBorder().IsEnabled = true;
                 if (delayed)
-                    fadeControl(-1.0, 1.0, 1.0, DownloadWindow.GetInstance().getBorder().Name);
+                    FadeControl(-1.0, 1.0, 1.0, DownloadWindow.GetInstance().GetBorder().Name);
                 else
-                    fadeControl(0.0, 1.0, 0.5, DownloadWindow.GetInstance().getBorder().Name);
+                    FadeControl(0.0, 1.0, 0.5, DownloadWindow.GetInstance().GetBorder().Name);
                 copyLinkFromClipboard();
             }
             activeScreen = screen;
@@ -210,7 +229,8 @@ namespace kpeg
                 return;
             fadeInScreen(0, true);
         }
-        private void fadeControl(double from, double to, double durationSeconds, string controlName)
+
+        public void FadeControl(double from, double to, double durationSeconds, string controlName)
         {
             DoubleAnimation fadeAnimation = new DoubleAnimation();
             fadeAnimation.Duration = TimeSpan.FromSeconds(durationSeconds);
@@ -229,7 +249,7 @@ namespace kpeg
             if (activeScreen == 0)
             {
                 me.Play();
-                fadeControl(-0.5, 1.0, 5, me.Name);
+                FadeControl(-0.5, 1.0, 5, me.Name);
             }
         }
         private void stopVideo()
@@ -251,6 +271,10 @@ namespace kpeg
         private void downloadClicked(object sender, RoutedEventArgs e)
         {
             fadeInScreen(2, true);
+        }
+        private void convertClicked(object sender, RoutedEventArgs e)
+        {
+            fadeInScreen(1, true);
         }
 
         private void Image_MouseDown(object sender, MouseButtonEventArgs e)
