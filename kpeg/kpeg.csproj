@@ -88,6 +88,9 @@
     <Compile Include="Downloading\ProcessContainers\VideoDownloader.cs" />
     <Compile Include="Downloading\ProcessContainers\VideoNameDownloader.cs" />
     <Compile Include="Downloading\ProcessContainers\YTdlpUpdater.cs" />
+    <Compile Include="ExceptionWindow.xaml.cs">
+      <DependentUpon>ExceptionWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SettingsManager.cs" />
     <Compile Include="Utils.cs" />
     <Page Include="Conversion\GIFConversionPanel.xaml">
@@ -103,6 +106,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Conversion\ConvertWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ExceptionWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

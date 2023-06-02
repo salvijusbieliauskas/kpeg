@@ -24,19 +24,19 @@ namespace kpeg
             }
             catch (UnauthorizedAccessException e)
             {
-                throw new NotImplementedException(); //implement cases
+                new ExceptionWindow("Failed to save settings due to unauthorized access",e);
             }
             catch (PathTooLongException e)
             {
-                throw new NotImplementedException();
+                new ExceptionWindow("Path of the settings file was too long to write",e);
             }
             catch (IOException e)
             {
-                throw new NotImplementedException();
+                new ExceptionWindow("An IO exception has occured while saving settings",e);
             }
             catch (Exception e)
             {
-                throw new NotImplementedException();
+                new ExceptionWindow("An unknown exception has occured while saving settings",e);
             }
         }
         public static void Set(string key, object value)
@@ -83,25 +83,23 @@ namespace kpeg
             {
                 using (StreamReader sr = new StreamReader(SettingsFileName))
                 {
-                    Settings = (Dictionary<string, object>)JsonSerializer.Deserialize(sr, typeof(Dictionary<string, object>));
+                    Settings = (Dictionary<string, object>)JsonSerializer.Deserialize(sr,
+                        typeof(Dictionary<string, object>));
                 }
+
                 if (Settings == null || Settings.Count != GetDefaults().Count)
                 {
                     Settings = GetDefaults();
-                    throw new NotImplementedException();
+                    new ExceptionWindow("Failed loading settings, using defaults");
                 }
-            }
-            catch (DirectoryNotFoundException e)
-            {
-                throw new NotImplementedException();
             }
             catch (IOException e)
             {
-                throw new NotImplementedException();
+                new ExceptionWindow("An IO exception has occured while reading the settings file",e);
             }
             catch (Exception e)
             {
-                throw new NotImplementedException();
+                new ExceptionWindow("An unknown exception has occured while reading the settings file",e);
             }
         }
     }

@@ -1,0 +1,23 @@
+﻿<Window x:Class="kpeg.ExceptionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:kpeg"
+        mc:Ignorable="d"
+        Title="ExceptionWindow" Height="250" Width="400" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" xmlns:res="clr-namespace:kpeg.Properties"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}" ResizeMode="NoResize" WindowStyle="None">
+    <Grid>
+        <StackPanel Margin="0,20,0,20">
+            <Label Content="An exception has occurred" HorizontalAlignment="Center" FontSize="24"/>
+            <Label HorizontalAlignment="Center" FontSize="12" Content="12"/>
+        </StackPanel>
+        <Button Click="OkButtonClicked" VerticalAlignment="Bottom" Margin="60,20,60,20"/>
+    </Grid>
+</Window>
