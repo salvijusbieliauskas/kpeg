@@ -49,7 +49,6 @@ namespace kpeg
         private MainWindow()
         {
             InitializeComponent();
-            //initialize components and their values
             this.AddChild(mainGrid);
 
             Border barBorder = new Border();
@@ -71,6 +70,7 @@ namespace kpeg
             exitButton.HorizontalAlignment = HorizontalAlignment.Right;
             exitButton.Height = 30;
             exitButton.Width = 30;
+
             exitButton.BorderBrush = null;
             exitButton.Foreground = null;
             exitButton.Click += closeClick;

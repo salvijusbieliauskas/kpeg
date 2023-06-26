@@ -33,7 +33,6 @@ namespace kpeg.Downloading
         private TextBlock videoTitleBlock = new TextBlock();
         public System.Windows.Controls.Image videoThumbnail = new System.Windows.Controls.Image();
         private Button downloadConfirmButton = new Button();
-        private bool downloadInProgress = false;
 
         private StackPanel clipVideoSpanPanel = new StackPanel();
         private TextBox startMinClipBox = new TextBox();
@@ -260,6 +259,8 @@ namespace kpeg.Downloading
             downloadProgressBar.Value = 0;
             downloadProgressBar.VerticalAlignment = VerticalAlignment.Bottom;
             downloadProgressBar.Foreground = MainWindow.GetInstance().mainBrush;
+            downloadProgressBar.Background = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#181818");
+            downloadProgressBar.BorderBrush = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#181818");
 
             downloadGrid.Children.Add(downloadProgressLabel);
             downloadProgressLabel.VerticalAlignment = VerticalAlignment.Bottom;
@@ -465,7 +466,6 @@ namespace kpeg.Downloading
                         c.IsEnabled = false;
                     }
                 }
-                downloadInProgress = true;
                 downloadConfirmButton.Content = "Downloading...";
                 downloadConfirmButton.IsEnabled = false;
             }));
@@ -481,7 +481,6 @@ namespace kpeg.Downloading
                         c.IsEnabled = true;
                     }
                 }
-                downloadInProgress = false;
                 downloadConfirmButton.Content = "Download";
                 downloadConfirmButton.IsEnabled = true;
                 downloadProgressLabel.Content = "";

@@ -81,6 +81,9 @@
     <Compile Include="Conversion\ImageConversionPanel.xaml.cs">
       <DependentUpon>ImageConversionPanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Conversion\UserControls\ClipSelector.xaml.cs">
+      <DependentUpon>ClipSelector.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Conversion\VideoConversionPanel.xaml.cs">
       <DependentUpon>VideoConversionPanel.xaml</DependentUpon>
     </Compile>
@@ -98,6 +101,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Conversion\ImageConversionPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Conversion\UserControls\ClipSelector.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -181,7 +188,9 @@
     <Resource Include="Resources\minimizebutton.png" />
     <Resource Include="Resources\top.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Conversion\ProcessContainers\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\MaterialDesignThemes.4.7.0\build\MaterialDesignThemes.targets" Condition="Exists('..\packages\MaterialDesignThemes.4.7.0\build\MaterialDesignThemes.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

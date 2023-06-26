@@ -14,10 +14,11 @@
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}" ResizeMode="NoResize" WindowStyle="None">
     <Grid>
-        <StackPanel Margin="0,20,0,20">
-            <Label Content="An exception has occurred" HorizontalAlignment="Center" FontSize="24"/>
-            <Label HorizontalAlignment="Center" FontSize="12" Content="12"/>
+        <Rectangle VerticalAlignment="Top" Height="20" Fill="#181818" MouseDown="Rectangle_MouseDown"/>
+            <StackPanel Margin="0,20,0,20">
+            <Label Content="An exception has been thrown" HorizontalAlignment="Center" FontSize="24" Margin="0,0,0,10"/>
+            <TextBox Foreground="White" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" FontSize="16" x:Name="ExceptionMessageLabel" IsReadOnly="True"/>
         </StackPanel>
-        <Button Click="OkButtonClicked" VerticalAlignment="Bottom" Margin="60,20,60,20"/>
+        <Button Click="OkButtonClicked" VerticalAlignment="Bottom" Margin="60,20,60,20" Content="OK" FontSize="20"/>
     </Grid>
 </Window>

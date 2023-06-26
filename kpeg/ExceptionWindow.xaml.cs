@@ -22,11 +22,35 @@ namespace kpeg
         public ExceptionWindow(string message)
         {
             InitializeComponent();
+            this.Owner = MainWindow.GetInstance();
+            this.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            this.ExceptionMessageLabel.Text = message;
+            this.Show();
+        }
+
+        public ExceptionWindow(Exception e)
+        {
+            InitializeComponent();
+            this.ExceptionMessageLabel.Text = e.Message;
+            System.Diagnostics.Debug.WriteLine("An exception was thrown: " + e);
+            this.Show();
+        }
+        public ExceptionWindow(string message,Exception e)
+        {
+            InitializeComponent();
+            this.ExceptionMessageLabel.Text = message;
+            System.Diagnostics.Debug.WriteLine("An exception was thrown: " + e);
+            this.Show();
         }
 
         public void OkButtonClicked(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void Rectangle_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            this.DragMove();
         }
     }
 }
