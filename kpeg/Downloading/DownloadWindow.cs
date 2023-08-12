@@ -11,6 +11,7 @@ using System.Windows.Media.Imaging;
 using System.IO;
 using System.Security.Policy;
 using kpeg.Downloading.ProcessContainers;
+using kpeg.Conversion.UserControls;
 
 namespace kpeg.Downloading
 {
@@ -29,18 +30,12 @@ namespace kpeg.Downloading
         private CheckBox audioOnlyCheckBox = new CheckBox();
         private CheckBox convertToMp3CheckBox = new CheckBox();
         private CheckBox setDateModifiedToCurrentCheckBox = new CheckBox();
-        private CheckBox clipVideoCheckBox = new CheckBox();
         private TextBlock videoTitleBlock = new TextBlock();
         public System.Windows.Controls.Image videoThumbnail = new System.Windows.Controls.Image();
         private Button downloadConfirmButton = new Button();
 
-        private StackPanel clipVideoSpanPanel = new StackPanel();
-        private TextBox startMinClipBox = new TextBox();
-        private TextBox endMinClipBox = new TextBox();
-        private TextBox startSecClipBox = new TextBox();
-        private TextBox endSecClipBox = new TextBox();
-        private TextBox startHourClipBox = new TextBox();
-        private TextBox endHourClipBox = new TextBox();
+        private ClipSelector clipSelector = new ClipSelector();
+
 
         private System.Threading.Thread downloadThread;
         public static DownloadWindow GetInstance()
@@ -67,8 +62,7 @@ namespace kpeg.Downloading
             downloadGrid.Children.Add(audioOnlyCheckBox);
             downloadGrid.Children.Add(convertToMp3CheckBox);
             downloadGrid.Children.Add(setDateModifiedToCurrentCheckBox);
-            downloadGrid.Children.Add(clipVideoCheckBox);
-            downloadGrid.Children.Add(clipVideoSpanPanel);
+            downloadGrid.Children.Add(clipSelector);
 
             openDirectoryCheckBox.IsChecked = (bool)SettingsManager.Get("openDirectoryAfterDownload");
             openDirectoryCheckBox.FontSize = 16;
@@ -136,68 +130,7 @@ namespace kpeg.Downloading
             setDateModifiedToCurrentCheckBox.Checked += setDateCheckBoxChanged;
             setDateModifiedToCurrentCheckBox.Unchecked += setDateCheckBoxChanged;
 
-            clipVideoCheckBox.IsChecked = (bool)SettingsManager.Get("downloadClip");
-            clipVideoCheckBox.FontSize = 16;
-            clipVideoCheckBox.Foreground = System.Windows.Media.Brushes.White;
-            clipVideoCheckBox.VerticalAlignment = VerticalAlignment.Top;
-            clipVideoCheckBox.Margin = new Thickness(700, 30, 0, 0);
-            clipVideoCheckBox.Content = "Only download part of the video";//TODO:move temporary files to appdata/temp and give them a randomized name
-            clipVideoCheckBox.Background = MainWindow.GetInstance().mainBrush;
-            clipVideoCheckBox.BorderBrush = MainWindow.GetInstance().mainBrush;
-            clipVideoCheckBox.Checked += clipVideoCheckBoxChanged;
-            clipVideoCheckBox.Unchecked += clipVideoCheckBoxChanged;
-
-            clipVideoSpanPanel.Orientation = Orientation.Horizontal;
-            clipVideoSpanPanel.Margin = new Thickness(700, 50, 0, 0);
-            clipVideoSpanPanel.VerticalAlignment = VerticalAlignment.Top;
-
-            Label separator1 = new Label(), separator2 = new Label(), separator3 = new Label(), separator4 = new Label(), fromLabel = new Label(), toLabel = new Label();
-            clipVideoSpanPanel.Children.Add(fromLabel);
-            clipVideoSpanPanel.Children.Add(startHourClipBox);
-            clipVideoSpanPanel.Children.Add(separator1);
-            clipVideoSpanPanel.Children.Add(startMinClipBox);
-            clipVideoSpanPanel.Children.Add(separator2);
-            clipVideoSpanPanel.Children.Add(startSecClipBox);
-            clipVideoSpanPanel.Children.Add(toLabel);
-            clipVideoSpanPanel.Children.Add(endHourClipBox);
-            clipVideoSpanPanel.Children.Add(separator3);
-            clipVideoSpanPanel.Children.Add(endMinClipBox);
-            clipVideoSpanPanel.Children.Add(separator4);
-            clipVideoSpanPanel.Children.Add(endSecClipBox);
-            fromLabel.Content = "From ";
-            toLabel.Content = " To ";
-            separator1.Content = ":";
-            separator2.Content = ":";
-            separator3.Content = ":";
-            separator4.Content = ":";
-
-            startSecClipBox.Width = 17;
-            startMinClipBox.Width = 17;
-            startHourClipBox.Width = 17;
-            endSecClipBox.Width = 17;
-            endMinClipBox.Width = 17;
-            endHourClipBox.Width = 17;
-
-            startSecClipBox.CaretBrush = MainWindow.GetInstance().mainBrush;
-            startMinClipBox.CaretBrush = MainWindow.GetInstance().mainBrush;
-            startHourClipBox.CaretBrush = MainWindow.GetInstance().mainBrush;
-            endSecClipBox.CaretBrush = MainWindow.GetInstance().mainBrush;
-            endMinClipBox.CaretBrush = MainWindow.GetInstance().mainBrush;
-            endHourClipBox.CaretBrush = MainWindow.GetInstance().mainBrush;
-
-            startSecClipBox.TextChanged += timeBoxChanged;
-            startMinClipBox.TextChanged += timeBoxChanged;
-            startHourClipBox.TextChanged += timeBoxChanged;
-            endSecClipBox.TextChanged += timeBoxChanged;
-            endMinClipBox.TextChanged += timeBoxChanged;
-            endHourClipBox.TextChanged += timeBoxChanged;
-
-            startSecClipBox.Text = "00";
-            startMinClipBox.Text = "00";
-            startHourClipBox.Text = "00";
-            endSecClipBox.Text = "00";
-            endMinClipBox.Text = "00";
-            endHourClipBox.Text ="00";
+            //clipVideoCheckBox.IsChecked = (bool)SettingsManager.Get("downloadClip");
 
             downloadGrid.Children.Add(textBox1);
             textBox1.Width = 400;
@@ -268,6 +201,9 @@ namespace kpeg.Downloading
             downloadProgressLabel.FontSize = 15;
             downloadProgressLabel.Margin = new Thickness(0, 0, 0, 30);
 
+            clipSelector.VerticalAlignment = VerticalAlignment.Bottom;
+            clipSelector.Margin = new Thickness(0, 0, 0, 45);
+
             textBox_TextChanged(null, null);
             textBox2_TextChanged(null, null);
         }
@@ -283,30 +219,6 @@ namespace kpeg.Downloading
         public Image GetVideoThumbnail()
         {
             return this.videoThumbnail;
-        }
-        public TextBox GetStartSecBox()
-        {
-            return startSecClipBox;
-        }
-        public TextBox GetStartMinBox()
-        {
-            return startMinClipBox;
-        }
-        public TextBox GetStartHourBox()
-        {
-            return startHourClipBox;
-        }
-        public TextBox GetEndSecBox()
-        {
-            return endSecClipBox;
-        }
-        public TextBox GetEndMinBox()
-        {
-            return endMinClipBox;
-        }
-        public TextBox GetEndHourBox()
-        {
-            return endHourClipBox;
         }
 
         public ProgressBar GetProgressBar()
@@ -347,11 +259,6 @@ namespace kpeg.Downloading
         {
             SettingsManager.Set("setModifiedDate", setDateModifiedToCurrentCheckBox.IsChecked.Value);
         }
-        private void clipVideoCheckBoxChanged(object sender, RoutedEventArgs e)
-        {
-            SettingsManager.Set("downloadClip", clipVideoCheckBox.IsChecked.Value);
-            updateCheckBoxAccessibiity();
-        }
         private void browseButtonClicked(object sender, RoutedEventArgs e)
         {
             System.Windows.Forms.FolderBrowserDialog fbd = new System.Windows.Forms.FolderBrowserDialog();
@@ -359,22 +266,6 @@ namespace kpeg.Downloading
             if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 textBox2.Text = fbd.SelectedPath;
-            }
-        }
-        private void timeBoxChanged(object sender, RoutedEventArgs e)
-        {
-            TextBox senderBox = (TextBox)sender;
-            if(senderBox.Text.Length>2)
-            {
-                senderBox.Text = senderBox.Text.Substring(0, 2);
-                senderBox.CaretIndex = 2;
-            }
-            for(int x = 0; x < senderBox.Text.Length; x++)
-            {
-                if(!Char.IsNumber(senderBox.Text, x))
-                {
-                    senderBox.Text = senderBox.Text.Remove(x,1);
-                }
             }
         }
 
@@ -453,7 +344,6 @@ namespace kpeg.Downloading
                 convertToMp4CheckBox.IsEnabled = true;
             }
             convertToMp3CheckBox.IsEnabled = audioOnlyCheckBox.IsChecked.Value;
-            clipVideoSpanPanel.IsEnabled = clipVideoCheckBox.IsChecked.Value;
         }
         public void DisableDownloadChildren()
         {
@@ -486,6 +376,31 @@ namespace kpeg.Downloading
                 downloadProgressLabel.Content = "";
                 updateCheckBoxAccessibiity();
             }));
+        }
+
+        public TextBox GetStartMinBox()
+        {
+            throw new NotImplementedException();
+        }
+        public TextBox GetEndMinBox()
+        {
+            throw new NotImplementedException();
+        }
+        public TextBox GetStartSecBox()
+        {
+            throw new NotImplementedException();
+        }
+        public TextBox GetEndSecBox()
+        {
+            throw new NotImplementedException();
+        }
+        public TextBox GetStartHourBox()
+        {
+            throw new NotImplementedException();
+        }
+        public TextBox GetEndHourBox()
+        {
+            throw new NotImplementedException();
         }
     }
 }

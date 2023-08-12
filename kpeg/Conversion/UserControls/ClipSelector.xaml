@@ -5,11 +5,47 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:kpeg.Conversion.UserControls"
              mc:Ignorable="d" 
-             d:DesignHeight="20" d:DesignWidth="600" MouseMove="UserControl_MouseMove" MouseDown="UserControl_MouseDown" MouseUp="UserControl_MouseUp" Loaded="UserControl_Loaded">
+             d:DesignHeight="90" d:DesignWidth="960" MouseMove="UserControl_MouseMove" MouseDown="UserControl_MouseDown" MouseUp="UserControl_MouseUp" Loaded="UserControl_Loaded">
     <Grid>
-        <Rectangle Fill="Gray" Height="8" x:Name="HorizontalBar" Margin="4,0,4,0"/>
-        <Rectangle Fill="#FFFD0009" Height="8" x:Name="HorizontalFillBar" Margin="4,0,4,0"/>
-        <Rectangle Fill="DarkGray" Height="20" Stroke="Black" StrokeThickness="1.4" Cursor="SizeWE" Width="9" x:Name="VerticalBar2" HorizontalAlignment="Left"/>
-        <Rectangle Fill="DarkGray" Height="20" Stroke="Black" StrokeThickness="1.4" Cursor="SizeWE" Width="9" x:Name="VerticalBar1" HorizontalAlignment="Left"/>
+        <StackPanel>
+            <Grid VerticalAlignment="Top">
+                <CheckBox Margin="5,0,0,0" Foreground="White" x:Name="ClipCheckBox" FontSize="16">Clip video</CheckBox>
+            </Grid>
+            <Grid VerticalAlignment="Center" x:Name="SliderGrid">
+                <StackPanel>
+                    <Path Stroke="Black" StrokeThickness="0.8" Fill="DarkGray" x:Name="VerticalBar2" Cursor="SizeWE" HorizontalAlignment="Left">
+                        <Path.Data>
+                            <PathGeometry Figures="M0,0 L10,0 L10,10 L5,15 L0,10 L0,0 L10,0"/>
+                        </Path.Data>
+                    </Path>
+                    <Grid>
+                        <Rectangle Fill="Gray" Height="8" x:Name="HorizontalBar" Margin="5,0,5,0"/>
+                        <Rectangle Fill="#FFFD0009" Height="8" x:Name="HorizontalFillBar" Margin="5,0,5,0"/>
+                    </Grid>
+                    <Path Stroke="Black" StrokeThickness="0.8" Fill="DarkGray" x:Name="VerticalBar1" Cursor="SizeWE" Margin="0,0.6,0,0" HorizontalAlignment="Left">
+                        <Path.Data>
+                            <PathGeometry Figures="M5,0 L10,5 L10,15 L0,15 L0,5 L5,0 L10,5"/>
+                        </Path.Data>
+                    </Path>
+                </StackPanel>
+            </Grid>
+            <Grid VerticalAlignment="Bottom" HorizontalAlignment="Left" x:Name="TextBoxGrid">
+                <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
+                    <Label>From</Label>
+                    <TextBox Width="17" Foreground="White" TextChanged="TimeBoxChanged" TextAlignment="Center" x:Name="FromHourBox">00</TextBox>
+                    <Label Margin="0,3,0,0" Padding="0,0,0,0">:</Label>
+                    <TextBox Width="17" Foreground="White" TextChanged="TimeBoxChanged" TextAlignment="Center" x:Name="FromMinBox">00</TextBox>
+                    <Label Margin="0,3,0,0" Padding="0,0,0,0">:</Label>
+                    <TextBox Width="17" Foreground="White" TextChanged="TimeBoxChanged" TextAlignment="Center" x:Name="FromSecBox">00</TextBox>
+                    <Label>To</Label>
+                    <TextBox Width="17" Foreground="White" TextChanged="TimeBoxChanged" TextAlignment="Center" x:Name="ToHourBox">00</TextBox>
+                    <Label Margin="0,3,0,0" Padding="0,0,0,0">:</Label>
+                    <TextBox Width="17" Foreground="White" TextChanged="TimeBoxChanged" TextAlignment="Center" x:Name="ToMinBox">00</TextBox>
+                    <Label Margin="0,3,0,0" Padding="0,0,0,0">:</Label>
+                    <TextBox Width="17" Foreground="White" TextChanged="TimeBoxChanged" TextAlignment="Center" x:Name="ToSecBox">00</TextBox>
+                    <Label x:Name="DurationLabel">Duration: </Label>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
     </Grid>
 </UserControl>

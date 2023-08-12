@@ -23,6 +23,7 @@ namespace kpeg.Conversion.UserControls
         public ClipSelector()
         {
             InitializeComponent();
+            VideoDuration = 3600*5;
         }
 
         private void UserControl_MouseDown(object sender, MouseButtonEventArgs e)
@@ -30,46 +31,71 @@ namespace kpeg.Conversion.UserControls
             StartMouseCapture(e);
             UserControl_MouseMove(sender, e);
         }
-        private Rectangle capturedRectangle;
-        private bool first = true;
+        private Path capturedRectangle;
+        public int VideoDuration { get; set; } = 1;
         private void UserControl_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton != MouseButtonState.Pressed) return;
             if (!IsMouseCaptured) return;
-            Rectangle otherRectangle = capturedRectangle.Name == VerticalBar1.Name ? VerticalBar2 : VerticalBar1;
-
             
             double newPosition = e.GetPosition(this).X - (capturedRectangle.ActualWidth / 2);
-            if (newPosition < HorizontalBar.Margin.Left)
-                newPosition = HorizontalBar.Margin.Left;
-            else if (newPosition > HorizontalBar.ActualWidth - HorizontalBar.Margin.Right)
-                newPosition = HorizontalBar.ActualWidth - HorizontalBar.Margin.Right;
-
-            if (!first)
-            {
-                if (capturedRectangle.Margin.Left < newPosition)
-                {
-                    if (capturedRectangle.Margin.Left < otherRectangle.Margin.Left)
-                        if (newPosition > otherRectangle.Margin.Left - otherRectangle.ActualWidth)
-                            newPosition = otherRectangle.Margin.Left - otherRectangle.ActualWidth;
-                }
-                if (capturedRectangle.Margin.Left > newPosition)
-                {
-                    if (capturedRectangle.Margin.Left > otherRectangle.Margin.Left)
-                        if (newPosition < otherRectangle.Margin.Left + otherRectangle.ActualWidth)
-                            newPosition = otherRectangle.Margin.Left + otherRectangle.ActualWidth;
-                }
-            }
-
-            capturedRectangle.Margin = new Thickness(newPosition, 0, 0, 0);
-
-            double smallerMargin = VerticalBar1.Margin.Left<VerticalBar2.Margin.Left?VerticalBar1.Margin.Left:VerticalBar2.Margin.Left;
-            double biggerMargin = VerticalBar1.Margin.Left > VerticalBar2.Margin.Left ? VerticalBar1.Margin.Left : VerticalBar2.Margin.Left;
-            HorizontalFillBar.Margin = new Thickness(HorizontalBar.Margin.Left+smallerMargin, 0, HorizontalBar.Margin.Right+(HorizontalBar.ActualWidth-biggerMargin), 0);
-
-            first = false;
+            MoveBarTo(newPosition, capturedRectangle,true);
         }
 
+        private void MoveBarTo(double newPosition, Path rectangleToMove, bool updateTextBoxes)
+        {
+            Path otherRectangle = rectangleToMove.Name == VerticalBar1.Name ? VerticalBar2 : VerticalBar1;
+            double maxPosition = HorizontalBar.ActualWidth - HorizontalBar.Margin.Right+rectangleToMove.ActualWidth/2;
+            double minPosition = HorizontalBar.Margin.Left-rectangleToMove.ActualWidth/2;
+
+            if (newPosition < minPosition)
+                newPosition = minPosition;
+            else if (newPosition > maxPosition)
+                newPosition = maxPosition;
+
+            rectangleToMove.Margin = new Thickness(newPosition, 0, 0, 0);
+
+            double smallerMargin = VerticalBar1.Margin.Left < VerticalBar2.Margin.Left ? VerticalBar1.Margin.Left : VerticalBar2.Margin.Left;
+            double biggerMargin = VerticalBar1.Margin.Left > VerticalBar2.Margin.Left ? VerticalBar1.Margin.Left : VerticalBar2.Margin.Left;
+            HorizontalFillBar.Margin = new Thickness(HorizontalBar.Margin.Left + smallerMargin, 0, HorizontalBar.Margin.Right + (HorizontalBar.ActualWidth - biggerMargin), 0);
+
+            if (updateTextBoxes)
+            {
+                UpdateFrom((int)((smallerMargin / maxPosition) * VideoDuration));
+                UpdateTo((int)((biggerMargin / maxPosition) * VideoDuration));
+            }
+        }
+
+        private void UpdateFrom(int seconds)
+        {
+            TimeSpan span = TimeSpan.FromSeconds(seconds);
+
+            FromHourBox.Text = span.Hours.ToString().PadLeft(2, '0');
+            FromMinBox.Text = span.Minutes.ToString().PadLeft(2, '0');
+            FromSecBox.Text = span.Seconds.ToString().PadLeft(2, '0');
+        }
+        private void UpdateTo(int seconds)
+        {
+            TimeSpan span = TimeSpan.FromSeconds(seconds);
+
+            ToHourBox.Text = span.Hours.ToString().PadLeft(2, '0');
+            ToMinBox.Text = span.Minutes.ToString().PadLeft(2, '0');
+            ToSecBox.Text = span.Seconds.ToString().PadLeft(2, '0');
+        }
+
+        private void UpdateBarFrom(int seconds)
+        {
+            double maxPosition = HorizontalBar.ActualWidth - HorizontalBar.Margin.Right;
+            double newPosition = ((double)seconds / VideoDuration) * maxPosition;
+            MoveBarTo(newPosition, VerticalBar1,false);
+        }
+
+        private void UpdateBarTo(int seconds)
+        {
+            double maxPosition = HorizontalBar.ActualWidth - HorizontalBar.Margin.Right;
+            double newPosition = (seconds / VideoDuration) * maxPosition;
+            MoveBarTo(newPosition, VerticalBar2,false);
+        }
         private void StartMouseCapture(MouseEventArgs e)
         {
             Cursor = Cursors.SizeWE;
@@ -92,16 +118,55 @@ namespace kpeg.Conversion.UserControls
             Cursor = Cursors.Arrow;
             ForceCursor = false;
             capturedRectangle = null;
-            first = true;
         }
         private void UserControl_MouseUp(object sender, MouseButtonEventArgs e)
         {
             EndMouseCapture();
         }
-
+        private int GetFromSeconds()
+        {
+            return int.Parse(FromHourBox.Text) * 3600 + int.Parse(FromMinBox.Text) * 60 +
+                              int.Parse(FromSecBox.Text);
+        }
+        private int GetToSeconds()
+        {
+            return int.Parse(ToHourBox.Text) * 3600 + int.Parse(ToMinBox.Text) * 60 +
+                            int.Parse(ToSecBox.Text);
+        }
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             VerticalBar2.Margin = new Thickness(HorizontalBar.ActualWidth - HorizontalBar.Margin.Right, 0, 0, 0);
+        }
+        private void TimeBoxChanged(object sender, RoutedEventArgs e)
+        {
+            if (FromHourBox == null || FromMinBox == null || FromSecBox == null || ToHourBox == null || ToMinBox == null || ToSecBox == null)
+                return;
+            TextBox senderBox = (TextBox)sender;
+            if (senderBox.Text.Length > 2)
+            {
+                senderBox.Text = senderBox.Text.Substring(0, 2);
+                senderBox.CaretIndex = 2;
+            }
+            for (int x = 0; x < senderBox.Text.Length; x++)
+            {
+                if (!Char.IsNumber(senderBox.Text, x))
+                {
+                    senderBox.Text = senderBox.Text.Remove(x, 1);
+                }
+            }
+            if(DurationLabel!=null)
+                DurationLabel.Content = $"Duration: {TimeSpan.FromSeconds(GetToSeconds()-GetFromSeconds()).ToString(@"hh\:mm\:ss")}";
+            if (IsMouseCaptured)
+                return;
+
+            try
+            {
+                UpdateBarFrom(GetFromSeconds());
+                UpdateBarTo(GetToSeconds());
+            }
+            catch (System.FormatException)
+            {
+            }
         }
     }
 }
