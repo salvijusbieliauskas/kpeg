@@ -2,6 +2,7 @@
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 using kpeg.Properties;
 
@@ -89,13 +90,19 @@ namespace kpeg.Downloading.ProcessContainers
 
                 p.OutputDataReceived += (s, e) =>
                 {
+                    if (e.Data == null)
+                        return;
                     (messageString, audioString) = processDownloadProgressString(e.Data, audioOnly, messageString,
                         audioString, (audioOnly && convertToMp3) || (!audioOnly && convertToMp4), isPlaylist);
+                    Application.Current.Dispatcher.Invoke(() => { TerminalWindow.GetInstance().VideoDownloaderView.TextBox.AppendText(e.Data.Trim() + '\n'); });
                 };
                 p.ErrorDataReceived += (s, e) =>
                 {
+                    if (e.Data == null)
+                        return;
                     (messageString, audioString) = processDownloadProgressString(e.Data, audioOnly, messageString,
                         audioString, (audioOnly && convertToMp3) || (!audioOnly && convertToMp4), isPlaylist);
+                    Application.Current.Dispatcher.Invoke(() => { TerminalWindow.GetInstance().VideoDownloaderView.TextBox.AppendText(e.Data.Trim() + '\n'); });
                 };
                 p.Start();
                 p.BeginErrorReadLine();

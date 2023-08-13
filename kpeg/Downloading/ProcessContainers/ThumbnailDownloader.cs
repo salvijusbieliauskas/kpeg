@@ -44,8 +44,20 @@ namespace kpeg.Downloading.ProcessContainers
                     "Resources/");
                 p.StartInfo = info;
                 string accumulated = "";
-                p.OutputDataReceived += (s, e) => { accumulated += e.Data + '\n'; Debug.WriteLine(e.Data); };
-                p.ErrorDataReceived += (s, e) => { accumulated += e.Data + '\n'; Debug.WriteLine(e.Data); };
+                p.OutputDataReceived += (s, e) =>
+                {
+                    if (e.Data == null)
+                        return;
+                    accumulated += e.Data + '\n';
+                    Application.Current.Dispatcher.Invoke(() => { TerminalWindow.GetInstance().ThumbnailDownloaderView.TextBox.AppendText(e.Data.Trim() + '\n'); });
+                };
+                p.ErrorDataReceived += (s, e) =>
+                {
+                    if (e.Data == null)
+                        return;
+                    accumulated += e.Data + '\n';
+                    Application.Current.Dispatcher.Invoke(() => { TerminalWindow.GetInstance().ThumbnailDownloaderView.TextBox.AppendText(e.Data.Trim() + '\n'); });
+                };
                 p.Start();
                 p.BeginErrorReadLine();
                 p.BeginOutputReadLine();

@@ -1,0 +1,25 @@
+﻿<UserControl x:Class="kpeg.TerminalWindow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" Height="530" Width="960"
+    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+    TextElement.FontWeight="Regular"
+    TextElement.FontSize="13"
+    TextOptions.TextFormattingMode="Ideal"
+    TextOptions.TextRenderingMode="Auto"
+    Background="{DynamicResource MaterialDesignPaper}"
+    FontFamily="{DynamicResource MaterialDesignFont}">
+    <Grid>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Height="30">
+            <Button Click="ThumbnailDownloaderButtonClicked">Thumbnail downloader</Button>
+            <Button Click="VideoDownloaderButtonClicked">Video downloader</Button>
+            <Button Click="VideoNameDownloaderButtonClicked">Video name downloader</Button>
+            <Button Click="YtdlpUpdaterButtonClicked">Yt-dlp updater</Button>
+        </StackPanel>
+        <Grid x:Name="TerminalViewGrid" Margin="0,30,0,0">
+            
+        </Grid>
+    </Grid>
+</UserControl>

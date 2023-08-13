@@ -42,15 +42,27 @@ namespace kpeg.Downloading.ProcessContainers
                     "Resources/");
                 p.StartInfo = info;
                 string accumulated = "";
-                p.OutputDataReceived += (s, e) => { accumulated += e.Data + '\n'; };
-                p.ErrorDataReceived += (s, e) => { accumulated += e.Data + '\n'; };
+                p.OutputDataReceived += (s, e) =>
+                {
+                    if (e.Data == null)
+                        return;
+                    accumulated += e.Data + '\n';
+                    Application.Current.Dispatcher.Invoke(() => { TerminalWindow.GetInstance().VideoNameDownloaderView.TextBox.AppendText(e.Data.Trim() + '\n'); });
+                };
+                p.ErrorDataReceived += (s, e) =>
+                {
+                    if (e.Data == null)
+                        return;
+                    accumulated += e.Data + '\n';
+                    Application.Current.Dispatcher.Invoke(() => { TerminalWindow.GetInstance().VideoNameDownloaderView.TextBox.AppendText(e.Data.Trim() + '\n'); });
+                };
                 p.Start();
                 p.BeginErrorReadLine();
                 p.BeginOutputReadLine();
                 p.WaitForExit();
                 if (Cancelled) return;
 
-                if (accumulated.Contains("yt-dlp -U"))
+                if (accumulated.Trim().EndsWith("yt-dlp -U"))
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {

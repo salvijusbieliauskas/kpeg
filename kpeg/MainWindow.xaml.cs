@@ -103,6 +103,19 @@ namespace kpeg
             startButton.Foreground = null;
             startButton.Click += startClicked;
 
+            Button terminalWindowButton = new Button();
+            barGrid.Children.Add(terminalWindowButton);
+            terminalWindowButton.VerticalAlignment = VerticalAlignment.Top;
+            terminalWindowButton.HorizontalAlignment = HorizontalAlignment.Left;
+            terminalWindowButton.Height = 30;
+            terminalWindowButton.Width = 30;
+            terminalWindowButton.Margin = new Thickness(95, 0, 0, 0);
+            terminalWindowButton.Background = System.Windows.Media.Brushes.White;
+            terminalWindowButton.BorderBrush = null;
+            terminalWindowButton.Foreground = System.Windows.Media.Brushes.White;
+            terminalWindowButton.Click += TerminalWindowButton_Click;
+
+
             mainGrid.Children.Add(startingBorder);
             startingBorder.Name = "startingBorder";
             this.RegisterName(startingBorder.Name, startingBorder);
@@ -162,6 +175,24 @@ namespace kpeg
             vb.Visual = me;
             startingBorder.Background = vb;
         }
+
+        private void TerminalWindowButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (TerminalWindow.GetInstance().IsEnabled)
+            {
+                TerminalWindow.GetInstance().Visibility = Visibility.Hidden;
+                TerminalWindow.GetInstance().IsHitTestVisible = false;
+                TerminalWindow.GetInstance().IsEnabled = false;
+            }
+            else
+            {
+                TerminalWindow.GetInstance().Visibility = Visibility.Visible;
+                TerminalWindow.GetInstance().IsHitTestVisible = true;
+                TerminalWindow.GetInstance().IsEnabled = true;
+            }
+
+        }
+
         private void fadeOutCurrent()
         {
             if (activeScreen == 0)

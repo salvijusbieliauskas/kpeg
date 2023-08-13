@@ -40,13 +40,17 @@ namespace kpeg.Downloading.ProcessContainers
                 string output = "";
                 p.OutputDataReceived += new DataReceivedEventHandler((s, e) =>
                 {
+                    if (e.Data == null)
+                        return;
                     output += e.Data + "\n";
-                    System.Diagnostics.Debug.WriteLine(e.Data);
+                    Application.Current.Dispatcher.Invoke(() => { TerminalWindow.GetInstance().YtdlpUpdaterView.TextBox.AppendText(e.Data.Trim() + '\n'); });
                 });
                 p.ErrorDataReceived += new DataReceivedEventHandler((s, e) =>
                 {
+                    if (e.Data == null)
+                        return;
                     output += e.Data + "\n";
-                    System.Diagnostics.Debug.WriteLine(e.Data);
+                    Application.Current.Dispatcher.Invoke(() => { TerminalWindow.GetInstance().YtdlpUpdaterView.TextBox.AppendText(e.Data.Trim() + '\n'); });
                 });
                 p.Start();
                 p.BeginErrorReadLine();
