@@ -62,7 +62,7 @@ namespace kpeg.Downloading.ProcessContainers
                              int.Parse(DownloadWindow.GetInstance().GetEndMinBox().Text) * 60 +
                              int.Parse(DownloadWindow.GetInstance().GetEndHourBox().Text) * 3600;
 
-                    info.Arguments += string.Format(" --download-sections \"*{0}-{1}\"", from, to);
+                    info.Arguments += string.Format("--force-keyframes-at-cuts --download-sections \"*{0}-{1}\"", from, to);
                 });
             info.Arguments += " " + url;
             info.WorkingDirectory = (string)SettingsManager.Get("downloadDirectory");

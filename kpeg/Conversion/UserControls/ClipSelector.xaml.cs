@@ -23,7 +23,6 @@ namespace kpeg.Conversion.UserControls
         public ClipSelector()
         {
             InitializeComponent();
-            VideoDuration = 3600*5;
         }
 
         private void UserControl_MouseDown(object sender, MouseButtonEventArgs e)
@@ -41,17 +40,21 @@ namespace kpeg.Conversion.UserControls
             double newPosition = e.GetPosition(this).X - (capturedRectangle.ActualWidth / 2);
             MoveBarTo(newPosition, capturedRectangle,true);
         }
-
+        private double GetMaxPosition()
+        {
+            return HorizontalBar.ActualWidth - HorizontalBar.Margin.Right + VerticalBar1.ActualWidth / 2;
+        }
         private void MoveBarTo(double newPosition, Path rectangleToMove, bool updateTextBoxes)
         {
             Path otherRectangle = rectangleToMove.Name == VerticalBar1.Name ? VerticalBar2 : VerticalBar1;
-            double maxPosition = HorizontalBar.ActualWidth - HorizontalBar.Margin.Right+rectangleToMove.ActualWidth/2;
+            double maxPosition = GetMaxPosition();
             double minPosition = HorizontalBar.Margin.Left-rectangleToMove.ActualWidth/2;
 
             if (newPosition < minPosition)
                 newPosition = minPosition;
             else if (newPosition > maxPosition)
                 newPosition = maxPosition;
+
 
             rectangleToMove.Margin = new Thickness(newPosition, 0, 0, 0);
 
@@ -61,8 +64,14 @@ namespace kpeg.Conversion.UserControls
 
             if (updateTextBoxes)
             {
-                UpdateFrom((int)((smallerMargin / maxPosition) * VideoDuration));
-                UpdateTo((int)((biggerMargin / maxPosition) * VideoDuration));
+                if (newPosition == minPosition)
+                    UpdateFrom(0);
+                else
+                    UpdateFrom((int)((smallerMargin / maxPosition) * VideoDuration));
+                if (newPosition == maxPosition)
+                    UpdateTo(VideoDuration);
+                else
+                    UpdateTo((int)((biggerMargin / maxPosition) * VideoDuration));
             }
         }
 
@@ -85,14 +94,14 @@ namespace kpeg.Conversion.UserControls
 
         private void UpdateBarFrom(int seconds)
         {
-            double maxPosition = HorizontalBar.ActualWidth - HorizontalBar.Margin.Right;
+            double maxPosition = GetMaxPosition();
             double newPosition = ((double)seconds / VideoDuration) * maxPosition;
             MoveBarTo(newPosition, VerticalBar1,false);
         }
 
         private void UpdateBarTo(int seconds)
         {
-            double maxPosition = HorizontalBar.ActualWidth - HorizontalBar.Margin.Right;
+            double maxPosition = GetMaxPosition();
             double newPosition = (seconds / VideoDuration) * maxPosition;
             MoveBarTo(newPosition, VerticalBar2,false);
         }
@@ -125,17 +134,33 @@ namespace kpeg.Conversion.UserControls
         }
         private int GetFromSeconds()
         {
-            return int.Parse(FromHourBox.Text) * 3600 + int.Parse(FromMinBox.Text) * 60 +
-                              int.Parse(FromSecBox.Text);
+            try
+            {
+                return int.Parse(FromHourBox.Text) * 3600 + int.Parse(FromMinBox.Text) * 60 +
+                                  int.Parse(FromSecBox.Text);
+            }catch(FormatException e)
+            {
+                return 0;
+            }
         }
         private int GetToSeconds()
         {
+            try {
             return int.Parse(ToHourBox.Text) * 3600 + int.Parse(ToMinBox.Text) * 60 +
                             int.Parse(ToSecBox.Text);
+            }
+            catch(FormatException e)
+            {
+                return 0;
+            }
         }
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            VerticalBar2.Margin = new Thickness(HorizontalBar.ActualWidth - HorizontalBar.Margin.Right, 0, 0, 0);
+            //VerticalBar2.Margin = new Thickness(HorizontalBar.ActualWidth - HorizontalBar.Margin.Right/2, 0, 0, 0);
+            UpdateTo(VideoDuration);
+            UpdateFrom(0);
+            UpdateBarTo(VideoDuration);
+            UpdateBarFrom(0);
         }
         private void TimeBoxChanged(object sender, RoutedEventArgs e)
         {
@@ -167,6 +192,62 @@ namespace kpeg.Conversion.UserControls
             catch (System.FormatException)
             {
             }
+        }
+
+        private void ClipCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            foreach(UIElement element in SliderGrid.Children)
+            {
+                element.IsEnabled = (bool)ClipCheckBox.IsChecked;
+                if(element.GetType().Equals(typeof(StackPanel)))
+                {
+                    foreach (UIElement element2 in ((StackPanel)element).Children)
+                    {
+                        element2.IsEnabled = (bool)ClipCheckBox.IsChecked;
+                    }
+                }
+            }
+            foreach (UIElement element in TextBoxGrid.Children)
+            {
+                element.IsEnabled = (bool)ClipCheckBox.IsChecked;
+                if (element.GetType().Equals(typeof(StackPanel)))
+                {
+                    foreach (UIElement element2 in ((StackPanel)element).Children)
+                    {
+                        element2.IsEnabled = (bool)ClipCheckBox.IsChecked;
+                    }
+                }
+            }
+
+            Brush primaryColor = ((bool)ClipCheckBox.IsChecked) ? (Brush)new BrushConverter().ConvertFromString("#9f9f9f") : (Brush)new BrushConverter().ConvertFromString("#5f5f5f");
+            Brush secondaryColor = ((bool)ClipCheckBox.IsChecked) ? (Brush)new BrushConverter().ConvertFromString("#FFFD0009") : (Brush)new BrushConverter().ConvertFromString("#a80006");
+
+            VerticalBar1.Fill = primaryColor;
+            VerticalBar2.Fill = primaryColor;
+            HorizontalBar.Fill = primaryColor;
+            HorizontalFillBar.Fill = secondaryColor;
+        }
+        private void TextBox_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            if (((TextBox)sender).SelectionLength == 0)
+                ((TextBox)sender).SelectAll();
+        }
+
+        private void TextBox_LostMouseCapture(object sender, MouseEventArgs e)
+        {
+            if (((TextBox)sender).SelectionLength == 0)
+                ((TextBox)sender).SelectAll();
+
+            ((TextBox)sender).LostMouseCapture -= TextBox_LostMouseCapture;
+        }
+
+        private void TextBox_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            ((TextBox)sender).LostMouseCapture += TextBox_LostMouseCapture;
+            if (GetToSeconds() > VideoDuration)
+                UpdateTo(VideoDuration);
+            if (GetFromSeconds() < 0)
+                UpdateFrom(0);
         }
     }
 }

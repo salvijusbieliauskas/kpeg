@@ -44,8 +44,8 @@ namespace kpeg.Downloading.ProcessContainers
                     "Resources/");
                 p.StartInfo = info;
                 string accumulated = "";
-                p.OutputDataReceived += (s, e) => { accumulated += e.Data + '\n'; };
-                p.ErrorDataReceived += (s, e) => { accumulated += e.Data + '\n'; };
+                p.OutputDataReceived += (s, e) => { accumulated += e.Data + '\n'; Debug.WriteLine(e.Data); };
+                p.ErrorDataReceived += (s, e) => { accumulated += e.Data + '\n'; Debug.WriteLine(e.Data); };
                 p.Start();
                 p.BeginErrorReadLine();
                 p.BeginOutputReadLine();
@@ -60,12 +60,12 @@ namespace kpeg.Downloading.ProcessContainers
                     return;
                 }
 
-                if (accumulated.Contains("yt-dlp -U"))
+                if (accumulated.EndsWith("yt-dlp -U"))
                 {
                     CurrentURL = "";
                     return;
                 }
-
+                
                 if (!Cancelled)
                     Application.Current.Dispatcher.Invoke(() =>
                     {

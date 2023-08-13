@@ -41,16 +41,18 @@ namespace kpeg.Downloading.ProcessContainers
                 p.OutputDataReceived += new DataReceivedEventHandler((s, e) =>
                 {
                     output += e.Data + "\n";
+                    System.Diagnostics.Debug.WriteLine(e.Data);
                 });
                 p.ErrorDataReceived += new DataReceivedEventHandler((s, e) =>
                 {
                     output += e.Data + "\n";
+                    System.Diagnostics.Debug.WriteLine(e.Data);
                 });
                 p.Start();
                 p.BeginErrorReadLine();
                 p.BeginOutputReadLine();
                 p.WaitForExit();
-                return output.Contains("Updated");
+                return output.Contains("Updated") || output.Contains("up to date");
             }
         }
 

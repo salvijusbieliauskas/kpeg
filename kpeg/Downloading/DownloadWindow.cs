@@ -131,6 +131,9 @@ namespace kpeg.Downloading
             setDateModifiedToCurrentCheckBox.Unchecked += setDateCheckBoxChanged;
 
             //clipVideoCheckBox.IsChecked = (bool)SettingsManager.Get("downloadClip");
+            clipSelector.ClipCheckBox.IsChecked = (bool)SettingsManager.Get("downloadClip");
+            clipSelector.ClipCheckBox.Checked += ClipCheckBox_Checked;
+            clipSelector.ClipCheckBox.Unchecked += ClipCheckBox_Checked;
 
             downloadGrid.Children.Add(textBox1);
             textBox1.Width = 400;
@@ -183,8 +186,8 @@ namespace kpeg.Downloading
             downloadGrid.Children.Add(videoThumbnail);
             videoThumbnail.Stretch = Stretch.Uniform;
             videoThumbnail.Width = 800;
-            videoThumbnail.Height = 280;
-            videoThumbnail.Margin = new Thickness(0, 145, 0, 0);
+            videoThumbnail.Height = 235;
+            videoThumbnail.Margin = new Thickness(0, 105, 0, 0);
             videoThumbnail.IsHitTestVisible = false;
 
             downloadGrid.Children.Add(downloadProgressBar);
@@ -207,6 +210,12 @@ namespace kpeg.Downloading
             textBox_TextChanged(null, null);
             textBox2_TextChanged(null, null);
         }
+
+        private void ClipCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            SettingsManager.Set("downloadClip",clipSelector.ClipCheckBox.IsChecked);
+        }
+
         public Border GetBorder()
         {
             return this.downloadBorder;
@@ -380,27 +389,27 @@ namespace kpeg.Downloading
 
         public TextBox GetStartMinBox()
         {
-            throw new NotImplementedException();
+            return clipSelector.FromMinBox;
         }
         public TextBox GetEndMinBox()
         {
-            throw new NotImplementedException();
+            return clipSelector.ToMinBox;
         }
         public TextBox GetStartSecBox()
         {
-            throw new NotImplementedException();
+            return clipSelector.FromSecBox;
         }
         public TextBox GetEndSecBox()
         {
-            throw new NotImplementedException();
+            return clipSelector.ToSecBox;
         }
         public TextBox GetStartHourBox()
         {
-            throw new NotImplementedException();
+            return clipSelector.FromHourBox;
         }
         public TextBox GetEndHourBox()
         {
-            throw new NotImplementedException();
+            return clipSelector.ToHourBox;
         }
     }
 }

@@ -9,20 +9,20 @@
     <Grid>
         <StackPanel>
             <Grid VerticalAlignment="Top">
-                <CheckBox Margin="5,0,0,0" Foreground="White" x:Name="ClipCheckBox" FontSize="16">Clip video</CheckBox>
+                <CheckBox Margin="5,0,0,0" Foreground="White" x:Name="ClipCheckBox" FontSize="16" Checked="ClipCheckBox_Checked" Unchecked="ClipCheckBox_Checked">Clip video</CheckBox>
             </Grid>
             <Grid VerticalAlignment="Center" x:Name="SliderGrid">
                 <StackPanel>
-                    <Path Stroke="Black" StrokeThickness="0.8" Fill="DarkGray" x:Name="VerticalBar2" Cursor="SizeWE" HorizontalAlignment="Left">
+                    <Path Stroke="Black" StrokeThickness="0.8" Fill="#9f9f9f" x:Name="VerticalBar2" Cursor="SizeWE" HorizontalAlignment="Left">
                         <Path.Data>
                             <PathGeometry Figures="M0,0 L10,0 L10,10 L5,15 L0,10 L0,0 L10,0"/>
                         </Path.Data>
                     </Path>
                     <Grid>
-                        <Rectangle Fill="Gray" Height="8" x:Name="HorizontalBar" Margin="5,0,5,0"/>
+                        <Rectangle Fill="#9f9f9f" Height="8" x:Name="HorizontalBar" Margin="5,0,5,0"/>
                         <Rectangle Fill="#FFFD0009" Height="8" x:Name="HorizontalFillBar" Margin="5,0,5,0"/>
                     </Grid>
-                    <Path Stroke="Black" StrokeThickness="0.8" Fill="DarkGray" x:Name="VerticalBar1" Cursor="SizeWE" Margin="0,0.6,0,0" HorizontalAlignment="Left">
+                    <Path Stroke="Black" StrokeThickness="0.8" Fill="#9f9f9f" x:Name="VerticalBar1" Cursor="SizeWE" Margin="0,0.6,0,0" HorizontalAlignment="Left">
                         <Path.Data>
                             <PathGeometry Figures="M5,0 L10,5 L10,15 L0,15 L0,5 L5,0 L10,5"/>
                         </Path.Data>
@@ -32,17 +32,17 @@
             <Grid VerticalAlignment="Bottom" HorizontalAlignment="Left" x:Name="TextBoxGrid">
                 <StackPanel Orientation="Horizontal" FlowDirection="LeftToRight">
                     <Label>From</Label>
-                    <TextBox Width="17" Foreground="White" TextChanged="TimeBoxChanged" TextAlignment="Center" x:Name="FromHourBox">00</TextBox>
+                    <TextBox Width="17" Foreground="White" TextChanged="TimeBoxChanged" TextAlignment="Center" x:Name="FromHourBox" GotKeyboardFocus="TextBox_GotKeyboardFocus" LostKeyboardFocus="TextBox_LostKeyboardFocus" LostMouseCapture="TextBox_LostMouseCapture">00</TextBox>
                     <Label Margin="0,3,0,0" Padding="0,0,0,0">:</Label>
-                    <TextBox Width="17" Foreground="White" TextChanged="TimeBoxChanged" TextAlignment="Center" x:Name="FromMinBox">00</TextBox>
+                    <TextBox Width="17" Foreground="White" TextChanged="TimeBoxChanged" TextAlignment="Center" x:Name="FromMinBox" GotKeyboardFocus="TextBox_GotKeyboardFocus" LostKeyboardFocus="TextBox_LostKeyboardFocus" LostMouseCapture="TextBox_LostMouseCapture">00</TextBox>
                     <Label Margin="0,3,0,0" Padding="0,0,0,0">:</Label>
-                    <TextBox Width="17" Foreground="White" TextChanged="TimeBoxChanged" TextAlignment="Center" x:Name="FromSecBox">00</TextBox>
+                    <TextBox Width="17" Foreground="White" TextChanged="TimeBoxChanged" TextAlignment="Center" x:Name="FromSecBox" GotKeyboardFocus="TextBox_GotKeyboardFocus" LostKeyboardFocus="TextBox_LostKeyboardFocus" LostMouseCapture="TextBox_LostMouseCapture">00</TextBox>
                     <Label>To</Label>
-                    <TextBox Width="17" Foreground="White" TextChanged="TimeBoxChanged" TextAlignment="Center" x:Name="ToHourBox">00</TextBox>
+                    <TextBox Width="17" Foreground="White" TextChanged="TimeBoxChanged" TextAlignment="Center" x:Name="ToHourBox" GotKeyboardFocus="TextBox_GotKeyboardFocus" LostKeyboardFocus="TextBox_LostKeyboardFocus" LostMouseCapture="TextBox_LostMouseCapture">00</TextBox>
                     <Label Margin="0,3,0,0" Padding="0,0,0,0">:</Label>
-                    <TextBox Width="17" Foreground="White" TextChanged="TimeBoxChanged" TextAlignment="Center" x:Name="ToMinBox">00</TextBox>
+                    <TextBox Width="17" Foreground="White" TextChanged="TimeBoxChanged" TextAlignment="Center" x:Name="ToMinBox" GotKeyboardFocus="TextBox_GotKeyboardFocus" LostKeyboardFocus="TextBox_LostKeyboardFocus" LostMouseCapture="TextBox_LostMouseCapture">00</TextBox>
                     <Label Margin="0,3,0,0" Padding="0,0,0,0">:</Label>
-                    <TextBox Width="17" Foreground="White" TextChanged="TimeBoxChanged" TextAlignment="Center" x:Name="ToSecBox">00</TextBox>
+                    <TextBox Width="17" Foreground="White" TextChanged="TimeBoxChanged" TextAlignment="Center" x:Name="ToSecBox" GotKeyboardFocus="TextBox_GotKeyboardFocus" LostKeyboardFocus="TextBox_LostKeyboardFocus" LostMouseCapture="TextBox_LostMouseCapture">00</TextBox>
                     <Label x:Name="DurationLabel">Duration: </Label>
                 </StackPanel>
             </Grid>
