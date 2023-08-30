@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -39,38 +41,25 @@ namespace kpeg.Downloading.ProcessContainers
             bool convertToMp4 = (bool)SettingsManager.Get("convertToMp4");
             bool isPlaylist = Utils.isPlayList(url);
             bool downloadClip = (bool)SettingsManager.Get("downloadClip");
-            info.Arguments = "";
+            if (audioOnly)
+                convertToMp4 = false;
             if (audioOnly)
             {
                 info.Arguments += "-f \"bestaudio\" -x";
                 if (convertToMp3)
                     info.Arguments += " --audio-format wav";
             }
-            else if (convertToMp4)
-            {
-                info.Arguments += " -f \"bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best\"";
-            }
 
             if ((bool)SettingsManager.Get("setModifiedDate"))
                 info.Arguments += " --no-mtime";
-            if (downloadClip)
-                MainWindow.GetInstance().Dispatcher.Invoke(() =>
-                {
-                    int from = int.Parse(DownloadWindow.GetInstance().GetStartSecBox().Text) +
-                               int.Parse(DownloadWindow.GetInstance().GetStartMinBox().Text) * 60 +
-                               int.Parse(DownloadWindow.GetInstance().GetStartHourBox().Text) * 3600;
-                    int to = int.Parse(DownloadWindow.GetInstance().GetEndSecBox().Text) +
-                             int.Parse(DownloadWindow.GetInstance().GetEndMinBox().Text) * 60 +
-                             int.Parse(DownloadWindow.GetInstance().GetEndHourBox().Text) * 3600;
-
-                    info.Arguments += string.Format("--force-keyframes-at-cuts --download-sections \"*{0}-{1}\"", from, to);
-                });
             info.Arguments += " " + url;
             info.WorkingDirectory = (string)SettingsManager.Get("downloadDirectory");
             info.CreateNoWindow = true;
             info.UseShellExecute = false;
             info.RedirectStandardOutput = true;
             info.RedirectStandardError = true;
+            Application.Current.Dispatcher.Invoke(() => { TerminalWindow.GetInstance().VideoDownloaderView.TextBox.AppendText(info.WorkingDirectory+"> "+info.FileName+" "+info.Arguments + '\n'); });
+            string output = "";
             using (Process p = new Process())
             {
                 p.StartInfo = info;
@@ -92,17 +81,25 @@ namespace kpeg.Downloading.ProcessContainers
                 {
                     if (e.Data == null)
                         return;
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        TerminalWindow.GetInstance().VideoDownloaderView.TextBox.AppendText(e.Data.Trim() + '\n');
+                    });
                     (messageString, audioString) = processDownloadProgressString(e.Data, audioOnly, messageString,
                         audioString, (audioOnly && convertToMp3) || (!audioOnly && convertToMp4), isPlaylist);
-                    Application.Current.Dispatcher.Invoke(() => { TerminalWindow.GetInstance().VideoDownloaderView.TextBox.AppendText(e.Data.Trim() + '\n'); });
+                    output += e.Data+'\n';
                 };
                 p.ErrorDataReceived += (s, e) =>
                 {
                     if (e.Data == null)
                         return;
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        TerminalWindow.GetInstance().VideoDownloaderView.TextBox.AppendText(e.Data.Trim() + '\n');
+                    });
                     (messageString, audioString) = processDownloadProgressString(e.Data, audioOnly, messageString,
                         audioString, (audioOnly && convertToMp3) || (!audioOnly && convertToMp4), isPlaylist);
-                    Application.Current.Dispatcher.Invoke(() => { TerminalWindow.GetInstance().VideoDownloaderView.TextBox.AppendText(e.Data.Trim() + '\n'); });
+                    output += e.Data+'\n';
                 };
                 p.Start();
                 p.BeginErrorReadLine();
@@ -110,11 +107,67 @@ namespace kpeg.Downloading.ProcessContainers
                 p.WaitForExit();
             }
 
+
+
+            if ((!audioOnly && convertToMp4) || downloadClip)
+            {
+                string outputName = "";
+                try
+                {
+                    outputName = Regex.Match(output, "\\[Merger\\] Merging formats into \"[^\"]*\"", RegexOptions.IgnoreCase).ToString().Substring(31).TrimEnd(new char[] { '"' });
+                }
+                catch
+                {
+                    try
+                    {
+                        outputName = output.Substring(output.IndexOf("[ExtractAudio] Destination: ") + "[ExtractAudio] Destination: ".Length, output.IndexOf("\n", output.IndexOf("[ExtractAudio] Destination:")) - output.IndexOf("[ExtractAudio] Destination:") - "[ExtractAudio] Destination:".Length-1);
+                    }
+                    catch
+                    {
+                        DownloadWindow.GetInstance().EnableDownloadChildren();
+                        if (openDirectory)
+                            Process.Start(info.WorkingDirectory);
+                        return;
+                    }
+                }
+                string conversionArguments = "";
+                string conversionPath = Path.Combine((string)SettingsManager.Get("downloadDirectory"),outputName);
+                string inputExtension = outputName.Split(new char[] { '.' }, System.StringSplitOptions.RemoveEmptyEntries).Last();
+                string outputExtension = "c."+inputExtension;
+
+                if (downloadClip)
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        conversionArguments += $"-ss {DownloadWindow.GetInstance().GetStartHourBox().Text}:{DownloadWindow.GetInstance().GetStartMinBox().Text}:{DownloadWindow.GetInstance().GetStartSecBox().Text} -to {DownloadWindow.GetInstance().GetEndHourBox().Text}:{DownloadWindow.GetInstance().GetEndMinBox().Text}:{DownloadWindow.GetInstance().GetEndSecBox().Text}";
+
+                    });
+                if (!convertToMp4)
+                {
+                    conversionArguments += " -c:a copy";
+                    if (!audioOnly)
+                        conversionArguments += " -c:v copy";
+                }
+                else
+                    outputExtension = "c.mp4";
+
+                MainWindow.GetInstance().Dispatcher.Invoke(() =>
+                {
+                    DownloadWindow.GetInstance().GetProgressBarLabel().Content = "Converting";
+                });
+                await DownloadConverter.GetInstance().ConvertDownloadedVideo(conversionPath, conversionArguments, conversionPath.Substring(0,conversionPath.Length-inputExtension.Length)+outputExtension);
+                File.Delete(conversionPath);
+                MainWindow.GetInstance().Dispatcher.Invoke(() =>
+                {
+                    DownloadWindow.GetInstance().GetProgressBarLabel().Content = "";
+                });
+            }
+
             DownloadWindow.GetInstance().EnableDownloadChildren();
             if (openDirectory)
                 Process.Start(info.WorkingDirectory);
         }
 
+        double lastProgress = -1;
         private (string, string) processDownloadProgressString(string str, bool audioOnly, string startingString,
             string alternativeString, bool needsConversion, bool isPlaylist)
         {
@@ -134,6 +187,9 @@ namespace kpeg.Downloading.ProcessContainers
 
                 return (startingString, alternativeString);
             }
+            if (lastProgress == progress&&progress>0&&progress<100)
+                return (startingString, alternativeString);
+            lastProgress = progress;
 
             MainWindow.GetInstance().Dispatcher.Invoke(() =>
             {

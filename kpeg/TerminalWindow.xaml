@@ -13,10 +13,12 @@
     FontFamily="{DynamicResource MaterialDesignFont}">
     <Grid>
         <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Height="30">
-            <Button Click="ThumbnailDownloaderButtonClicked">Thumbnail downloader</Button>
-            <Button Click="VideoDownloaderButtonClicked">Video downloader</Button>
-            <Button Click="VideoNameDownloaderButtonClicked">Video name downloader</Button>
-            <Button Click="YtdlpUpdaterButtonClicked">Yt-dlp updater</Button>
+            <Button Click="ThumbnailDownloaderButtonClicked" Padding="3">Thumbnail downloader</Button>
+            <Button Click="VideoDownloaderButtonClicked" Padding="3">Video downloader</Button>
+            <Button Click="VideoNameDownloaderButtonClicked" Padding="3">Video name downloader</Button>
+            <Button Click="YtdlpUpdaterButtonClicked" Padding="3">Yt-dlp updater</Button>
+            <Button Click="VideoMetadataDownloaderClicked" Padding="3">Video metadata downloader</Button>
+            <Button Click="DownloadedVideoConverterClicked" Padding="3">Downloaded video converter</Button>
         </StackPanel>
         <Grid x:Name="TerminalViewGrid" Margin="0,30,0,0">
             

@@ -22,6 +22,7 @@ namespace kpeg.Conversion.UserControls
     {
         public ClipSelector()
         {
+            VideoDuration = 1;
             InitializeComponent();
         }
 
@@ -31,7 +32,10 @@ namespace kpeg.Conversion.UserControls
             UserControl_MouseMove(sender, e);
         }
         private Path capturedRectangle;
-        public int VideoDuration { get; set; } = 1;
+        private int duration;
+        public int VideoDuration { get { return duration; } set {
+                duration = value; System.Diagnostics.Debug.WriteLine($"Duration set to {value}");
+            } }
         private void UserControl_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton != MouseButtonState.Pressed) return;
@@ -154,13 +158,14 @@ namespace kpeg.Conversion.UserControls
                 return 0;
             }
         }
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        public void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             //VerticalBar2.Margin = new Thickness(HorizontalBar.ActualWidth - HorizontalBar.Margin.Right/2, 0, 0, 0);
             UpdateTo(VideoDuration);
             UpdateFrom(0);
             UpdateBarTo(VideoDuration);
             UpdateBarFrom(0);
+            ClipCheckBox_Checked(null,null);
         }
         private void TimeBoxChanged(object sender, RoutedEventArgs e)
         {

@@ -12,6 +12,6 @@
     Background="{DynamicResource MaterialDesignPaper}"
     FontFamily="{DynamicResource MaterialDesignFont}">
     <Grid>
-        <RichTextBox x:Name="TextBox" VerticalScrollBarVisibility="Auto" IsReadOnly="True"></RichTextBox>
+        <RichTextBox x:Name="TextBox" VerticalScrollBarVisibility="Auto" IsReadOnly="True" TextChanged="TextBox_TextChanged"></RichTextBox>
     </Grid>
 </UserControl>

@@ -110,10 +110,10 @@ namespace kpeg
             terminalWindowButton.Height = 30;
             terminalWindowButton.Width = 30;
             terminalWindowButton.Margin = new Thickness(95, 0, 0, 0);
-            terminalWindowButton.Background = System.Windows.Media.Brushes.White;
             terminalWindowButton.BorderBrush = null;
-            terminalWindowButton.Foreground = System.Windows.Media.Brushes.White;
             terminalWindowButton.Click += TerminalWindowButton_Click;
+            terminalWindowButton.Foreground = new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Resources/terminalIcon.png")));
+            terminalWindowButton.Background = new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Resources/terminalIcon.png")));
 
 
             mainGrid.Children.Add(startingBorder);
@@ -135,6 +135,7 @@ namespace kpeg
             convertButton.Background = mainBrush;
             convertButton.Click += convertClicked;
             convertButton.Content = "Convert";
+            convertButton.IsEnabled = false;
 
             MaterialDesignThemes.Wpf.ElevationAssist.SetElevation(convertButton, MaterialDesignThemes.Wpf.Elevation.Dp24);
 

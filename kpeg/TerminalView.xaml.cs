@@ -26,5 +26,10 @@ namespace kpeg
             InitializeComponent();
             DName = name;
         }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            TextBox.ScrollToEnd();
+        }
     }
 }

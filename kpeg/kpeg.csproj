@@ -36,6 +36,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>favicon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="MaterialDesignColors, Version=1.0.1.0, Culture=neutral, PublicKeyToken=df2a72020bd7962a, processorArchitecture=MSIL">
       <HintPath>..\packages\MaterialDesignColors.2.1.0\lib\net462\MaterialDesignColors.dll</HintPath>
@@ -87,8 +90,10 @@
     <Compile Include="Conversion\VideoConversionPanel.xaml.cs">
       <DependentUpon>VideoConversionPanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Downloading\ProcessContainers\DownloadConverter.cs" />
     <Compile Include="Downloading\ProcessContainers\ThumbnailDownloader.cs" />
     <Compile Include="Downloading\ProcessContainers\VideoDownloader.cs" />
+    <Compile Include="Downloading\ProcessContainers\VideoMetadataDownloader.cs" />
     <Compile Include="Downloading\ProcessContainers\VideoNameDownloader.cs" />
     <Compile Include="Downloading\ProcessContainers\YTdlpUpdater.cs" />
     <Compile Include="ExceptionWindow.xaml.cs">
@@ -176,6 +181,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="favicon.ico" />
     <Content Include="Resources\ahri.wmv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -194,6 +200,7 @@
     <Content Include="Resources\phantomjs.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\terminalIcon.png" />
     <Content Include="Resources\yt-dlp.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

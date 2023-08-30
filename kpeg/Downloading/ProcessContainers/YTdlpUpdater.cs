@@ -59,7 +59,6 @@ namespace kpeg.Downloading.ProcessContainers
                 return output.Contains("Updated") || output.Contains("up to date");
             }
         }
-
         public async Task UpdateYTDLP()
         {
             Application.Current.Dispatcher.Invoke(new Action(() =>

@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
@@ -69,8 +70,10 @@ namespace kpeg.Downloading.ProcessContainers
                         DownloadWindow.GetInstance().GetVideoTitleBlock().Text = "Update required. Please wait.";
                     });
                     await YTdlpUpdater.GetInstance().UpdateYTDLP();
-                    await GetVideoName(url);
-                    ThumbnailDownloader.GetInstance().UpdateThumbnail(url);
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        DownloadWindow.GetInstance().textBox_TextChanged(null, null);
+                    });
                     CurrentURL = "";
                     return;
                 }
@@ -87,8 +90,9 @@ namespace kpeg.Downloading.ProcessContainers
                 }
 
 
-                if (accumulated.StartsWith("WARNING") && accumulated.Contains(".js"))
-                    accumulated = accumulated.Substring(accumulated.IndexOf(".js") + 3);
+                //if (accumulated.StartsWith("WARNING") && accumulated.Contains(".js"))
+                //    accumulated = accumulated.Substring(accumulated.IndexOf(".js") + 3);
+                accumulated = accumulated.Split(new char[] { '\n' },System.StringSplitOptions.RemoveEmptyEntries).Last();
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     DownloadWindow.GetInstance().GetVideoTitleBlock().Text = Utils.isPlayList(url)

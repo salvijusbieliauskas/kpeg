@@ -34,7 +34,7 @@ namespace kpeg.Downloading
         public System.Windows.Controls.Image videoThumbnail = new System.Windows.Controls.Image();
         private Button downloadConfirmButton = new Button();
 
-        private ClipSelector clipSelector = new ClipSelector();
+        public ClipSelector clipSelector = new ClipSelector();
 
 
         private System.Threading.Thread downloadThread;
@@ -130,6 +130,12 @@ namespace kpeg.Downloading
             setDateModifiedToCurrentCheckBox.Checked += setDateCheckBoxChanged;
             setDateModifiedToCurrentCheckBox.Unchecked += setDateCheckBoxChanged;
 
+            //yea
+            setDateModifiedToCurrentCheckBox.IsChecked = true;
+            setDateModifiedToCurrentCheckBox.IsEnabled = false;
+            setDateModifiedToCurrentCheckBox.Visibility = Visibility.Hidden;
+            //
+
             //clipVideoCheckBox.IsChecked = (bool)SettingsManager.Get("downloadClip");
             clipSelector.ClipCheckBox.IsChecked = (bool)SettingsManager.Get("downloadClip");
             clipSelector.ClipCheckBox.Checked += ClipCheckBox_Checked;
@@ -206,6 +212,7 @@ namespace kpeg.Downloading
 
             clipSelector.VerticalAlignment = VerticalAlignment.Bottom;
             clipSelector.Margin = new Thickness(0, 0, 0, 45);
+            DisableClipSelector();
 
             textBox_TextChanged(null, null);
             textBox2_TextChanged(null, null);
@@ -295,7 +302,7 @@ namespace kpeg.Downloading
                 textBox2.Background = null;
             }
         }
-        private void textBox_TextChanged(object sender, TextChangedEventArgs e)
+        public void textBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             string url = textBox1.Text.Trim();
             if (textBox1.Text == "")
@@ -321,6 +328,8 @@ namespace kpeg.Downloading
 
             Task.Run(() => ThumbnailDownloader.GetInstance().UpdateThumbnail(url));
             Task.Run(() => VideoNameDownloader.GetInstance().UpdateVideoName(url));
+            if (!Utils.isPlayList(url))
+                Task.Run(() => VideoMetadataDownloader.GetInstance().UpdateVideoMetadata(url));
 
         }
         public TextBox getLinkBox()
@@ -410,6 +419,16 @@ namespace kpeg.Downloading
         public TextBox GetEndHourBox()
         {
             return clipSelector.ToHourBox;
+        }
+        public void DisableClipSelector()
+        {
+            clipSelector.ClipCheckBox.IsChecked = false;
+            clipSelector.ClipCheckBox.IsEnabled = false;
+        }
+        public void EnableClipSelector()
+        {
+            clipSelector.ClipCheckBox.IsChecked = (bool)SettingsManager.Get("downloadClip");
+            clipSelector.ClipCheckBox.IsEnabled = true;
         }
     }
 }
