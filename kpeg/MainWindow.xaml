@@ -14,5 +14,5 @@
         TextOptions.TextFormattingMode="Ideal"
         TextOptions.TextRenderingMode="Auto"
         Background="{DynamicResource MaterialDesignPaper}"
-        FontFamily="{DynamicResource MaterialDesignFont}" ResizeMode="NoResize" WindowStyle="None" Closing="Window_Closing" Activated="windowActivated">
+        FontFamily="{DynamicResource MaterialDesignFont}" ResizeMode="NoResize" WindowStyle="None" Closing="Window_Closing" MouseDown="Window_MouseDown" Activated="WindowActivated">
 </Window>

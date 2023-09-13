@@ -33,26 +33,25 @@ namespace kpeg.Conversion.UserControls
         }
         private Path capturedRectangle;
         private int duration;
-        public int VideoDuration { get { return duration; } set {
-                duration = value; System.Diagnostics.Debug.WriteLine($"Duration set to {value}");
-            } }
+        public int VideoDuration { get; set; }
         private void UserControl_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton != MouseButtonState.Pressed) return;
             if (!IsMouseCaptured) return;
             
             double newPosition = e.GetPosition(this).X - (capturedRectangle.ActualWidth / 2);
-            MoveBarTo(newPosition, capturedRectangle,true);
+            MoveBarTo(newPosition, capturedRectangle);
+            UpdateTimeBoxes();
         }
         private double GetMaxPosition()
         {
             return HorizontalBar.ActualWidth - HorizontalBar.Margin.Right + VerticalBar1.ActualWidth / 2;
         }
-        private void MoveBarTo(double newPosition, Path rectangleToMove, bool updateTextBoxes)
+        private void MoveBarTo(double newPosition, Path rectangleToMove)
         {
             Path otherRectangle = rectangleToMove.Name == VerticalBar1.Name ? VerticalBar2 : VerticalBar1;
             double maxPosition = GetMaxPosition();
-            double minPosition = HorizontalBar.Margin.Left-rectangleToMove.ActualWidth/2;
+            double minPosition = GetMinPosition();
 
             if (newPosition < minPosition)
                 newPosition = minPosition;
@@ -65,18 +64,51 @@ namespace kpeg.Conversion.UserControls
             double smallerMargin = VerticalBar1.Margin.Left < VerticalBar2.Margin.Left ? VerticalBar1.Margin.Left : VerticalBar2.Margin.Left;
             double biggerMargin = VerticalBar1.Margin.Left > VerticalBar2.Margin.Left ? VerticalBar1.Margin.Left : VerticalBar2.Margin.Left;
             HorizontalFillBar.Margin = new Thickness(HorizontalBar.Margin.Left + smallerMargin, 0, HorizontalBar.Margin.Right + (HorizontalBar.ActualWidth - biggerMargin), 0);
-
-            if (updateTextBoxes)
+        }
+        private double GetMinPosition()
+        {
+            return HorizontalBar.Margin.Left - VerticalBar1.ActualWidth / 2;
+        }
+        private void UpdateTimeBoxes()
+        {
+            UpdateFromBoxes();
+            UpdateToBoxes();
+        }
+        private void UpdateFromBoxes()
+        {
+            Path pathToAnalyze = GetFromBar();
+            if(pathToAnalyze.Margin.Left==GetMaxPosition())
             {
-                if (newPosition == minPosition)
-                    UpdateFrom(0);
-                else
-                    UpdateFrom((int)((smallerMargin / maxPosition) * VideoDuration));
-                if (newPosition == maxPosition)
-                    UpdateTo(VideoDuration);
-                else
-                    UpdateTo((int)((biggerMargin / maxPosition) * VideoDuration));
+                UpdateFrom(VideoDuration);
+                return;
             }
+            if (pathToAnalyze.Margin.Left == GetMinPosition())
+            {
+                UpdateFrom(0);
+                return;
+            }
+
+            UpdateFrom((int)GetTimeFromBar(pathToAnalyze));
+        }
+        private void UpdateToBoxes()
+        {
+            Path pathToAnalyze = GetToBar();
+            if (pathToAnalyze.Margin.Left == GetMaxPosition())
+            {
+                UpdateTo(VideoDuration);
+                return;
+            }
+            if (pathToAnalyze.Margin.Left == GetMinPosition())
+            {
+                UpdateTo(0);
+                return;
+            }
+
+            UpdateTo((int)GetTimeFromBar(pathToAnalyze));
+        }
+        private double GetTimeFromBar(Path bar)
+        {
+            return (VideoDuration * bar.Margin.Left) / GetMaxPosition();
         }
 
         private void UpdateFrom(int seconds)
@@ -95,19 +127,28 @@ namespace kpeg.Conversion.UserControls
             ToMinBox.Text = span.Minutes.ToString().PadLeft(2, '0');
             ToSecBox.Text = span.Seconds.ToString().PadLeft(2, '0');
         }
-
+        private Path GetFromBar()
+        {
+            return VerticalBar1.Margin.Left > VerticalBar2.Margin.Left ? VerticalBar2 : VerticalBar1;
+        }
+        private Path GetToBar()
+        {
+            return VerticalBar1.Margin.Left < VerticalBar2.Margin.Left ? VerticalBar2 : VerticalBar1;
+        }
         private void UpdateBarFrom(int seconds)
         {
             double maxPosition = GetMaxPosition();
             double newPosition = ((double)seconds / VideoDuration) * maxPosition;
-            MoveBarTo(newPosition, VerticalBar1,false);
+            Path barToMove = GetFromBar();
+            MoveBarTo(newPosition, barToMove);
         }
 
         private void UpdateBarTo(int seconds)
         {
             double maxPosition = GetMaxPosition();
-            double newPosition = (seconds / VideoDuration) * maxPosition;
-            MoveBarTo(newPosition, VerticalBar2,false);
+            double newPosition = ((double)seconds / VideoDuration) * maxPosition;
+            Path barToMove = GetToBar();
+            MoveBarTo(newPosition, barToMove);
         }
         private void StartMouseCapture(MouseEventArgs e)
         {
@@ -136,7 +177,7 @@ namespace kpeg.Conversion.UserControls
         {
             EndMouseCapture();
         }
-        private int GetFromSeconds()
+        public int GetFromSeconds()
         {
             try
             {
@@ -147,7 +188,7 @@ namespace kpeg.Conversion.UserControls
                 return 0;
             }
         }
-        private int GetToSeconds()
+        public int GetToSeconds()
         {
             try {
             return int.Parse(ToHourBox.Text) * 3600 + int.Parse(ToMinBox.Text) * 60 +
@@ -160,7 +201,6 @@ namespace kpeg.Conversion.UserControls
         }
         public void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            //VerticalBar2.Margin = new Thickness(HorizontalBar.ActualWidth - HorizontalBar.Margin.Right/2, 0, 0, 0);
             UpdateTo(VideoDuration);
             UpdateFrom(0);
             UpdateBarTo(VideoDuration);
@@ -188,17 +228,24 @@ namespace kpeg.Conversion.UserControls
                 DurationLabel.Content = $"Duration: {TimeSpan.FromSeconds(GetToSeconds()-GetFromSeconds()).ToString(@"hh\:mm\:ss")}";
             if (IsMouseCaptured)
                 return;
+            if (senderBox.Text.Length < 2)
+                return;
+            if (int.Parse(senderBox.Text) <= 0)
+                return;
 
             try
             {
-                UpdateBarFrom(GetFromSeconds());
-                UpdateBarTo(GetToSeconds());
+                UpdateTimeBars();
             }
             catch (System.FormatException)
             {
             }
         }
-
+        private void UpdateTimeBars()
+        {
+            UpdateBarFrom(GetFromSeconds());
+            UpdateBarTo(GetToSeconds());
+        }
         private void ClipCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             foreach(UIElement element in SliderGrid.Children)
@@ -248,11 +295,16 @@ namespace kpeg.Conversion.UserControls
 
         private void TextBox_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
-            ((TextBox)sender).LostMouseCapture += TextBox_LostMouseCapture;
+            TextBox senderBox = (TextBox)sender;
+            senderBox.LostMouseCapture += TextBox_LostMouseCapture;
             if (GetToSeconds() > VideoDuration)
                 UpdateTo(VideoDuration);
             if (GetFromSeconds() < 0)
                 UpdateFrom(0);
+            TimeBoxChanged(sender,null);
+            if (senderBox.Text.Length == 1 && char.IsNumber(senderBox.Text[0]) && !IsMouseCaptured)
+                UpdateTimeBars();
+
         }
     }
 }

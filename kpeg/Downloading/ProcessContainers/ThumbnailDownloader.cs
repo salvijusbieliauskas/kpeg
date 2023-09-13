@@ -35,7 +35,7 @@ namespace kpeg.Downloading.ProcessContainers
                 info.FileName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
                     "Resources/yt-dlp.exe");
                 info.Arguments = "--skip-download --write-thumbnail --output tmpimage --convert-thumbnails png " +
-                                 Utils.trimListPart(url);
+                                 Utils.TrimListPart(url);
                 info.CreateNoWindow = true;
                 info.UseShellExecute = false;
                 info.RedirectStandardOutput = true;
@@ -81,7 +81,7 @@ namespace kpeg.Downloading.ProcessContainers
                 if (!Cancelled)
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        DownloadWindow.GetInstance().GetVideoThumbnail().Source = Utils.uriToSource(
+                        DownloadWindow.GetInstance().GetVideoThumbnail().Source = Utils.UriToSource(
                             Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
                                 "Resources/tmpimage.png"));
                     });
@@ -95,7 +95,7 @@ namespace kpeg.Downloading.ProcessContainers
 
         public async Task UpdateThumbnail(string url)
         {
-            if (!Utils.isLinkValid(url))
+            if (!Utils.IsLinkValid(url))
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {

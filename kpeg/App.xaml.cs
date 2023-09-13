@@ -19,7 +19,7 @@ namespace kpeg
             base.OnStartup(e);
 
             MainWindow mw = kpeg.MainWindow.GetInstance();
-            DownloadWindow.GetInstance().updateCheckBoxAccessibiity();
+            DownloadWindow.GetInstance().UpdateCheckBoxAccessibiity();
             mw.Show();
         }
     }

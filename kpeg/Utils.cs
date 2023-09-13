@@ -11,18 +11,42 @@ namespace kpeg
 {
     public static class Utils
     {
-        public static double downloadProgressStringToDouble(string str)
+        public static double DownloadProgressStringToDouble(string str, TimeSpan duration)
         {
             if (str == null)
                 return -1;
             if (str == "")
                 return -1;
+            if (str.IndexOf("100% of") > -1)
+                return 100;
+            int FFmpegParseResult = FFmpegProcessStringToSeconds(str, duration);
+            if (FFmpegParseResult != -1)
+                return FFmpegParseResult;
+
             if (str.IndexOf("download") < 0 || str.IndexOf("% of") < 0)
                 return -1;
             string progress = str.Substring(11, 5).Trim();
             if (double.TryParse(progress, out _))
                 return double.Parse(progress);
             return -1;
+        }
+        public static int FFmpegProcessStringToSeconds(string str, TimeSpan duration)
+        {
+            if (str == null)
+                return -1;
+            if (str == "")
+                return -1;
+            int index = str.IndexOf("time=");
+            if (index < 0)
+                return -1;
+            try
+            {
+                return (int)((TimeSpan.Parse(str.Substring(index + 5, 8)).TotalSeconds/duration.TotalSeconds)*100);
+            }
+            catch
+            {
+                return -1;
+            }
         }
         public static string GetDownloadFolderPath()
         {
@@ -36,9 +60,9 @@ namespace kpeg
 
             return System.Convert.ToString(Microsoft.Win32.Registry.GetValue(@"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders", "{374DE290-123F-4565-9164-39C4925E467B}", String.Empty));
         }
-        public static string trimListPart(string list)
+        public static string TrimListPart(string list)
         {
-            if (isPlayList(list))
+            if (IsPlayList(list))
             {
                 return list.Substring(0, list.IndexOf("&list"));
             }
@@ -52,7 +76,7 @@ namespace kpeg
             return System.Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
         }
 
-        public static void cleanupFiles()
+        public static void CleanupFiles()
         {
             DirectoryInfo di = new DirectoryInfo(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "Resources/"));
             foreach (FileInfo fileInfo in di.GetFiles())
@@ -61,11 +85,11 @@ namespace kpeg
                     fileInfo.Delete();
             }
         }
-        public static bool isPlayList(string url)
+        public static bool IsPlayList(string url)
         {
             return url.Contains("&list");
         }
-        public static bool isLinkValid(string link)
+        public static bool IsLinkValid(string link)
         {
             string linkType1 = "youtu.be/";
             string linkType2 = "watch?v=";
@@ -85,7 +109,7 @@ namespace kpeg
                 return link.Length >= link.IndexOf(linkType3) + 11 + linkType3.Length;
             }
         }
-        public static BitmapImage uriToSource(string path)
+        public static BitmapImage UriToSource(string path)
         {
             using (FileStream fs = new FileStream(path, FileMode.Open))
             {

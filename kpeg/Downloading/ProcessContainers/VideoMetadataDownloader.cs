@@ -39,7 +39,7 @@ namespace kpeg.Downloading.ProcessContainers
             {
                 ProcessStartInfo info = new ProcessStartInfo(
                     Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-                        "Resources/yt-dlp.exe"), "--skip-download --write-info-json -o metadata " + Utils.trimListPart(url));
+                        "Resources/yt-dlp.exe"), "--skip-download --write-info-json -o metadata " + Utils.TrimListPart(url));
                 info.CreateNoWindow = true;
                 info.UseShellExecute = false;
                 info.RedirectStandardOutput = true;
@@ -81,7 +81,7 @@ namespace kpeg.Downloading.ProcessContainers
 
         public async Task UpdateVideoMetadata(string url)
         {
-            if (!Utils.isLinkValid(url) || Utils.isPlayList(url))
+            if (!Utils.IsLinkValid(url) || Utils.IsPlayList(url))
             {
                 return;
             }

@@ -34,7 +34,7 @@ namespace kpeg.Downloading.ProcessContainers
             {
                 ProcessStartInfo info = new ProcessStartInfo(
                     Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-                        "Resources/yt-dlp.exe"), "--skip-download --print title " + Utils.trimListPart(url));
+                        "Resources/yt-dlp.exe"), "--skip-download --print title " + Utils.TrimListPart(url));
                 info.CreateNoWindow = true;
                 info.UseShellExecute = false;
                 info.RedirectStandardOutput = true;
@@ -72,7 +72,7 @@ namespace kpeg.Downloading.ProcessContainers
                     await YTdlpUpdater.GetInstance().UpdateYTDLP();
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        DownloadWindow.GetInstance().textBox_TextChanged(null, null);
+                        DownloadWindow.GetInstance().TextBox_TextChanged(null, null);
                     });
                     CurrentURL = "";
                     return;
@@ -95,7 +95,7 @@ namespace kpeg.Downloading.ProcessContainers
                 accumulated = accumulated.Split(new char[] { '\n' },System.StringSplitOptions.RemoveEmptyEntries).Last();
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    DownloadWindow.GetInstance().GetVideoTitleBlock().Text = Utils.isPlayList(url)
+                    DownloadWindow.GetInstance().GetVideoTitleBlock().Text = Utils.IsPlayList(url)
                         ? accumulated.Trim() + " (PLAYLIST)"
                         : accumulated.Trim();
                 });
@@ -104,7 +104,7 @@ namespace kpeg.Downloading.ProcessContainers
 
         public async Task UpdateVideoName(string url)
         {
-            if (!Utils.isLinkValid(url))
+            if (!Utils.IsLinkValid(url))
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {

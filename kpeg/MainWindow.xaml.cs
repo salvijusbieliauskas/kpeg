@@ -101,7 +101,7 @@ namespace kpeg
             startButton.Background = null;
             startButton.BorderBrush = null;
             startButton.Foreground = null;
-            startButton.Click += startClicked;
+            startButton.Click += StartClicked;
 
             Button terminalWindowButton = new Button();
             barGrid.Children.Add(terminalWindowButton);
@@ -149,7 +149,7 @@ namespace kpeg
             downloadButton.Height = 50;
             downloadButton.Background = mainBrush;
             downloadButton.Content = "Download";
-            downloadButton.Click += downloadClicked;
+            downloadButton.Click += DownloadClicked;
             MaterialDesignThemes.Wpf.ElevationAssist.SetElevation(downloadButton, MaterialDesignThemes.Wpf.Elevation.Dp24);
 
 
@@ -167,8 +167,8 @@ namespace kpeg
             me.Source = new Uri("Resources/ahri.wmv", UriKind.Relative);
             me.Stretch = Stretch.Fill;
             me.LoadedBehavior = MediaState.Manual;
-            me.Loaded += videoLoaded;
-            me.MediaEnded += videoEnded;
+            me.Loaded += VideoLoaded;
+            me.MediaEnded += VideoEnded;
             me.Opacity = 0;
             me.Volume = 0;
             me.Name = "mediaElement";
@@ -194,7 +194,7 @@ namespace kpeg
 
         }
 
-        private void fadeOutCurrent()
+        private void FadeOutCurrent()
         {
             if (activeScreen == 0)
             {
@@ -213,16 +213,16 @@ namespace kpeg
                 DownloadWindow.GetInstance().GetBorder().IsEnabled = false;
             }
         }
-        private void copyLinkFromClipboard()
+        private void CopyLinkFromClipboard()
         {
-            if (Utils.isLinkValid(Clipboard.GetText()))
-                DownloadWindow.GetInstance().getLinkBox().Text = Clipboard.GetText();
+            if (Utils.IsLinkValid(Clipboard.GetText()))
+                DownloadWindow.GetInstance().GetLinkBox().Text = Clipboard.GetText();
         }
-        private void fadeInScreen(int screen, bool delayed)
+        private void FadeInScreen(int screen, bool delayed)
         {
             if(screen == 0)
             {
-                fadeOutCurrent();
+                FadeOutCurrent();
                 startingBorder.IsEnabled = true;
                 if (delayed)
                     FadeControl(-1.0, 1.0, 1.0, startingBorder.Name);
@@ -231,7 +231,7 @@ namespace kpeg
             }
             else if (screen == 1)
             {
-                fadeOutCurrent();
+                FadeOutCurrent();
                 ConvertWindow.GetInstance().IsEnabled = true;
                 ConvertWindow.GetInstance().IsHitTestVisible = true;
                 if (delayed)
@@ -241,25 +241,25 @@ namespace kpeg
             }
             else if(screen == 2)
             {
-                fadeOutCurrent();
+                FadeOutCurrent();
                 DownloadWindow.GetInstance().GetBorder().IsEnabled = true;
                 if (delayed)
                     FadeControl(-1.0, 1.0, 1.0, DownloadWindow.GetInstance().GetBorder().Name);
                 else
                     FadeControl(0.0, 1.0, 0.5, DownloadWindow.GetInstance().GetBorder().Name);
-                copyLinkFromClipboard();
+                CopyLinkFromClipboard();
             }
             activeScreen = screen;
         }
-        private void videoLoaded(object sender, RoutedEventArgs e)
+        private void VideoLoaded(object sender, RoutedEventArgs e)
         {
-            playVideo();
+            PlayVideo();
         }
-        private void startClicked(object sender, RoutedEventArgs e)
+        private void StartClicked(object sender, RoutedEventArgs e)
         {
             if (activeScreen == 0)
                 return;
-            fadeInScreen(0, true);
+            FadeInScreen(0, true);
         }
 
         public void FadeControl(double from, double to, double durationSeconds, string controlName)
@@ -276,7 +276,7 @@ namespace kpeg
             Storyboard.SetDesiredFrameRate(fadeAnimation, 60);
             board.Begin(this);
         }
-        private void playVideo()
+        private void PlayVideo()
         {
             if (activeScreen == 0)
             {
@@ -284,29 +284,29 @@ namespace kpeg
                 FadeControl(-0.5, 1.0, 5, me.Name);
             }
         }
-        private void stopVideo()
+        private void StopVideo()
         {
             if (activeScreen == 0)
             {
                 me.Stop();
-                resetPosition();
+                ResetPosition();
             }
         }
-        private void resetPosition()
+        private void ResetPosition()
         {
             me.Position = TimeSpan.FromSeconds(0);
         }
-        private void videoEnded(object sender, RoutedEventArgs e)
+        private void VideoEnded(object sender, RoutedEventArgs e)
         {
-            resetPosition();
+            ResetPosition();
         }
-        private void downloadClicked(object sender, RoutedEventArgs e)
+        private void DownloadClicked(object sender, RoutedEventArgs e)
         {
-            fadeInScreen(2, true);
+            FadeInScreen(2, true);
         }
         private void convertClicked(object sender, RoutedEventArgs e)
         {
-            fadeInScreen(1, true);
+            FadeInScreen(1, true);
         }
 
         private void Image_MouseDown(object sender, MouseButtonEventArgs e)
@@ -325,13 +325,18 @@ namespace kpeg
         }
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            Utils.cleanupFiles();
+            Utils.CleanupFiles();
         }
 
-        private void windowActivated(object sender, EventArgs e)
+        private void WindowActivated(object sender, EventArgs e)
         {
-            if (activeScreen == 2 && !Utils.isLinkValid(DownloadWindow.GetInstance().getLinkBox().Text))
-                copyLinkFromClipboard();
+            if (activeScreen == 2 && !Utils.IsLinkValid(DownloadWindow.GetInstance().GetLinkBox().Text))
+                CopyLinkFromClipboard();
+        }
+
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Keyboard.ClearFocus();
         }
     }
 }

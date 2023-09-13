@@ -5,14 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:kpeg.Conversion.UserControls"
              mc:Ignorable="d" 
-             d:DesignHeight="90" d:DesignWidth="960" MouseMove="UserControl_MouseMove" MouseDown="UserControl_MouseDown" MouseUp="UserControl_MouseUp" Loaded="UserControl_Loaded">
+             d:DesignHeight="90" d:DesignWidth="960" MouseMove="UserControl_MouseMove" MouseUp="UserControl_MouseUp" Loaded="UserControl_Loaded">
     <Grid>
         <StackPanel>
             <Grid VerticalAlignment="Top">
                 <CheckBox Margin="5,0,0,0" Foreground="White" x:Name="ClipCheckBox" FontSize="16" Checked="ClipCheckBox_Checked" Unchecked="ClipCheckBox_Checked">Clip video</CheckBox>
             </Grid>
             <Grid VerticalAlignment="Center" x:Name="SliderGrid">
-                <StackPanel>
+                <StackPanel MouseDown="UserControl_MouseDown">
                     <Path Stroke="Black" StrokeThickness="0.8" Fill="#9f9f9f" x:Name="VerticalBar2" Cursor="SizeWE" HorizontalAlignment="Left">
                         <Path.Data>
                             <PathGeometry Figures="M0,0 L10,0 L10,10 L5,15 L0,10 L0,0 L10,0"/>

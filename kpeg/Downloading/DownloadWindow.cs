@@ -12,6 +12,9 @@ using System.IO;
 using System.Security.Policy;
 using kpeg.Downloading.ProcessContainers;
 using kpeg.Conversion.UserControls;
+using System.Windows.Media.Media3D;
+using System.Windows.Input;
+using System.Runtime.InteropServices;
 
 namespace kpeg.Downloading
 {
@@ -33,11 +36,9 @@ namespace kpeg.Downloading
         private TextBlock videoTitleBlock = new TextBlock();
         public System.Windows.Controls.Image videoThumbnail = new System.Windows.Controls.Image();
         private Button downloadConfirmButton = new Button();
+        Grid downloadGrid = new Grid();
 
         public ClipSelector clipSelector = new ClipSelector();
-
-
-        private System.Threading.Thread downloadThread;
         public static DownloadWindow GetInstance()
         {
             if (downloadWindowInstance == null)
@@ -53,7 +54,6 @@ namespace kpeg.Downloading
             downloadBorder.Margin = new Thickness(0, 30, 0, 0);
             downloadBorder.IsEnabled = false;
 
-            Grid downloadGrid = new Grid();
             downloadBorder.Child = downloadGrid;
 
             downloadGrid.Children.Add(openDirectoryCheckBox);
@@ -72,8 +72,8 @@ namespace kpeg.Downloading
             openDirectoryCheckBox.Content = "Open directory after download";
             openDirectoryCheckBox.Background = MainWindow.GetInstance().mainBrush;
             openDirectoryCheckBox.BorderBrush = MainWindow.GetInstance().mainBrush;
-            openDirectoryCheckBox.Checked += openDirectoryCheckBoxChanged;
-            openDirectoryCheckBox.Unchecked += openDirectoryCheckBoxChanged;
+            openDirectoryCheckBox.Checked += OpenDirectoryCheckBoxChanged;
+            openDirectoryCheckBox.Unchecked += OpenDirectoryCheckBoxChanged;
 
             openConverterCheckBox.IsChecked = (bool)SettingsManager.Get("openConverterAfterDownload");
             openConverterCheckBox.FontSize = 16;
@@ -83,8 +83,8 @@ namespace kpeg.Downloading
             openConverterCheckBox.Content = "Open converter after download";
             openConverterCheckBox.Background = MainWindow.GetInstance().mainBrush;
             openConverterCheckBox.BorderBrush = MainWindow.GetInstance().mainBrush;
-            openConverterCheckBox.Checked += openConverterCheckBoxChanged;
-            openConverterCheckBox.Unchecked += openConverterCheckBoxChanged;
+            openConverterCheckBox.Checked += OpenConverterCheckBoxChanged;
+            openConverterCheckBox.Unchecked += OpenConverterCheckBoxChanged;
 
             convertToMp4CheckBox.IsChecked = (bool)SettingsManager.Get("convertToMp4");
             convertToMp4CheckBox.FontSize = 16;
@@ -94,8 +94,8 @@ namespace kpeg.Downloading
             convertToMp4CheckBox.Content = "Convert to mp4";
             convertToMp4CheckBox.Background = MainWindow.GetInstance().mainBrush;
             convertToMp4CheckBox.BorderBrush = MainWindow.GetInstance().mainBrush;
-            convertToMp4CheckBox.Checked += mp4ConvertCheckBoxChanged;
-            convertToMp4CheckBox.Unchecked += mp4ConvertCheckBoxChanged;
+            convertToMp4CheckBox.Checked += Mp4ConvertCheckBoxChanged;
+            convertToMp4CheckBox.Unchecked += Mp4ConvertCheckBoxChanged;
 
             audioOnlyCheckBox.IsChecked = (bool)SettingsManager.Get("downloadAudioOnly");
             audioOnlyCheckBox.FontSize = 16;
@@ -105,8 +105,8 @@ namespace kpeg.Downloading
             audioOnlyCheckBox.Content = "Download audio only";
             audioOnlyCheckBox.Background = MainWindow.GetInstance().mainBrush;
             audioOnlyCheckBox.BorderBrush = MainWindow.GetInstance().mainBrush;
-            audioOnlyCheckBox.Checked += audioOnlyCheckBoxChanged;
-            audioOnlyCheckBox.Unchecked += audioOnlyCheckBoxChanged;
+            audioOnlyCheckBox.Checked += AudioOnlyCheckBoxChanged;
+            audioOnlyCheckBox.Unchecked += AudioOnlyCheckBoxChanged;
 
             convertToMp3CheckBox.IsChecked = (bool)SettingsManager.Get("downloadAudioAsMp3");
             convertToMp3CheckBox.FontSize = 16;
@@ -116,8 +116,8 @@ namespace kpeg.Downloading
             convertToMp3CheckBox.Content = "Convert audio to wav (slightly reduces quality)";
             convertToMp3CheckBox.Background = MainWindow.GetInstance().mainBrush;
             convertToMp3CheckBox.BorderBrush = MainWindow.GetInstance().mainBrush;
-            convertToMp3CheckBox.Checked += mp3ConvertCheckBoxChanged;
-            convertToMp3CheckBox.Unchecked += mp3ConvertCheckBoxChanged;
+            convertToMp3CheckBox.Checked += Mp3ConvertCheckBoxChanged;
+            convertToMp3CheckBox.Unchecked += Mp3ConvertCheckBoxChanged;
 
             setDateModifiedToCurrentCheckBox.IsChecked = (bool)SettingsManager.Get("setModifiedDate");
             setDateModifiedToCurrentCheckBox.FontSize = 16;
@@ -127,8 +127,8 @@ namespace kpeg.Downloading
             setDateModifiedToCurrentCheckBox.Content = "Set modified date to current";
             setDateModifiedToCurrentCheckBox.Background = MainWindow.GetInstance().mainBrush;
             setDateModifiedToCurrentCheckBox.BorderBrush = MainWindow.GetInstance().mainBrush;
-            setDateModifiedToCurrentCheckBox.Checked += setDateCheckBoxChanged;
-            setDateModifiedToCurrentCheckBox.Unchecked += setDateCheckBoxChanged;
+            setDateModifiedToCurrentCheckBox.Checked += SetDateCheckBoxChanged;
+            setDateModifiedToCurrentCheckBox.Unchecked += SetDateCheckBoxChanged;
 
             //yea
             setDateModifiedToCurrentCheckBox.IsChecked = true;
@@ -145,7 +145,7 @@ namespace kpeg.Downloading
             textBox1.Width = 400;
             textBox1.Height = 30;
             textBox1.TextAlignment = TextAlignment.Center;
-            textBox1.TextChanged += textBox_TextChanged;
+            textBox1.TextChanged += TextBox_TextChanged;
             textBox1.VerticalAlignment = VerticalAlignment.Top;
             textBox1.Margin = new Thickness(0, 10, 0, 0);
             textBox1.CaretBrush = MainWindow.GetInstance().mainBrush;
@@ -154,11 +154,11 @@ namespace kpeg.Downloading
             textBox2.Width = 340;
             textBox2.Height = 30;
             textBox2.TextAlignment = TextAlignment.Center;
-            textBox2.TextChanged += textBox2_TextChanged;
+            textBox2.TextChanged += TextBox2_TextChanged;
             textBox2.VerticalAlignment = VerticalAlignment.Top;
             textBox2.Margin = new Thickness(0, 50, 60, 0);
             textBox2.CaretBrush = MainWindow.GetInstance().mainBrush;
-            textBox2.TextChanged += downloadDirectoryChanged;
+            textBox2.TextChanged += DownloadDirectoryChanged;
             textBox2.Text = Utils.GetDownloadFolderPath();
 
             Button browseButton = new Button();
@@ -169,14 +169,14 @@ namespace kpeg.Downloading
             browseButton.VerticalAlignment = VerticalAlignment.Top;
             browseButton.Margin = new Thickness(350, 50, 0, 0);
             browseButton.Content = "Browse";
-            browseButton.Click += browseButtonClicked;
+            browseButton.Click += BrowseButtonClicked;
 
             downloadGrid.Children.Add(downloadConfirmButton);
             downloadConfirmButton.Background = MainWindow.GetInstance().mainBrush;
             downloadConfirmButton.Margin = new Thickness(100, 0, 100, 300);
             downloadConfirmButton.Content = "Download";
             downloadConfirmButton.IsEnabled = false;
-            downloadConfirmButton.Click += downloadConfirmButtonClicked;
+            downloadConfirmButton.Click += DownloadConfirmButtonClicked;
             downloadConfirmButton.Name = "downloadConfirmButton";
             MainWindow.GetInstance().RegisterName(downloadConfirmButton.Name, downloadConfirmButton);
 
@@ -214,8 +214,8 @@ namespace kpeg.Downloading
             clipSelector.Margin = new Thickness(0, 0, 0, 45);
             DisableClipSelector();
 
-            textBox_TextChanged(null, null);
-            textBox2_TextChanged(null, null);
+            TextBox_TextChanged(null, null);
+            TextBox2_TextChanged(null, null);
         }
 
         private void ClipCheckBox_Checked(object sender, RoutedEventArgs e)
@@ -245,37 +245,37 @@ namespace kpeg.Downloading
         {
             return downloadProgressLabel;
         }
-        private void downloadDirectoryChanged(object sender, RoutedEventArgs e)
+        private void DownloadDirectoryChanged(object sender, RoutedEventArgs e)
         {
             SettingsManager.Set("downloadDirectory", textBox2.Text);
         }
-        private void openDirectoryCheckBoxChanged(object sender, RoutedEventArgs e)
+        private void OpenDirectoryCheckBoxChanged(object sender, RoutedEventArgs e)
         {
             SettingsManager.Set("openDirectoryAfterDownload", openDirectoryCheckBox.IsChecked.Value);
         }
-        private void openConverterCheckBoxChanged(object sender, RoutedEventArgs e)
+        private void OpenConverterCheckBoxChanged(object sender, RoutedEventArgs e)
         {
             SettingsManager.Set("openConverterAfterDownload", openConverterCheckBox.IsChecked.Value);
-            updateCheckBoxAccessibiity();
+            UpdateCheckBoxAccessibiity();
         }
-        private void mp4ConvertCheckBoxChanged(object sender, RoutedEventArgs e)
+        private void Mp4ConvertCheckBoxChanged(object sender, RoutedEventArgs e)
         {
             SettingsManager.Set("convertToMp4", convertToMp4CheckBox.IsChecked.Value);
         }
-        private void mp3ConvertCheckBoxChanged(object sender, RoutedEventArgs e)
+        private void Mp3ConvertCheckBoxChanged(object sender, RoutedEventArgs e)
         {
             SettingsManager.Set("downloadAudioAsMp3", convertToMp3CheckBox.IsChecked.Value);
         }
-        private void audioOnlyCheckBoxChanged(object sender, RoutedEventArgs e)
+        private void AudioOnlyCheckBoxChanged(object sender, RoutedEventArgs e)
         {
             SettingsManager.Set("downloadAudioOnly", audioOnlyCheckBox.IsChecked.Value);
-            updateCheckBoxAccessibiity();
+            UpdateCheckBoxAccessibiity();
         }
-        private void setDateCheckBoxChanged(object sender, RoutedEventArgs e)
+        private void SetDateCheckBoxChanged(object sender, RoutedEventArgs e)
         {
             SettingsManager.Set("setModifiedDate", setDateModifiedToCurrentCheckBox.IsChecked.Value);
         }
-        private void browseButtonClicked(object sender, RoutedEventArgs e)
+        private void BrowseButtonClicked(object sender, RoutedEventArgs e)
         {
             System.Windows.Forms.FolderBrowserDialog fbd = new System.Windows.Forms.FolderBrowserDialog();
             fbd.Description = "Choose download folder";
@@ -285,7 +285,7 @@ namespace kpeg.Downloading
             }
         }
 
-        private void textBox2_TextChanged(object sender, TextChangedEventArgs e)
+        private void TextBox2_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (textBox2.Text == "")
             {
@@ -302,7 +302,7 @@ namespace kpeg.Downloading
                 textBox2.Background = null;
             }
         }
-        public void textBox_TextChanged(object sender, TextChangedEventArgs e)
+        public void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             string url = textBox1.Text.Trim();
             if (textBox1.Text == "")
@@ -317,7 +317,7 @@ namespace kpeg.Downloading
             {
                 textBox1.Background = null;
             }
-            if (!Utils.isLinkValid(url))
+            if (!Utils.IsLinkValid(url))
             {
                 downloadConfirmButton.IsEnabled = false;
                 videoTitleBlock.Text = "";
@@ -328,19 +328,19 @@ namespace kpeg.Downloading
 
             Task.Run(() => ThumbnailDownloader.GetInstance().UpdateThumbnail(url));
             Task.Run(() => VideoNameDownloader.GetInstance().UpdateVideoName(url));
-            if (!Utils.isPlayList(url))
+            if (!Utils.IsPlayList(url))
                 Task.Run(() => VideoMetadataDownloader.GetInstance().UpdateVideoMetadata(url));
 
         }
-        public TextBox getLinkBox()
+        public TextBox GetLinkBox()
         {
             return textBox1;
         }
-        public TextBox getDirectoryBox()
+        public TextBox GetDirectoryBox()
         {
             return textBox2;
         }
-        private void downloadConfirmButtonClicked(object sender, RoutedEventArgs e)
+        private void DownloadConfirmButtonClicked(object sender, RoutedEventArgs e)
         {
             if (!System.IO.Directory.Exists(textBox2.Text))
             {
@@ -349,9 +349,11 @@ namespace kpeg.Downloading
             }
 
             string url = textBox1.Text;
-            Task.Run(() => VideoDownloader.GetInstance().DownloadVideo(url));
+            int fromSeconds = clipSelector.GetFromSeconds();
+            int toSeconds = clipSelector.GetToSeconds();
+            Task.Run(() => VideoDownloader.GetInstance().DownloadVideo(url,fromSeconds,toSeconds));
         }
-        public void updateCheckBoxAccessibiity()
+        public void UpdateCheckBoxAccessibiity()
         {
             if (openConverterCheckBox.IsChecked.Value || audioOnlyCheckBox.IsChecked.Value)
             {
@@ -392,7 +394,7 @@ namespace kpeg.Downloading
                 downloadConfirmButton.Content = "Download";
                 downloadConfirmButton.IsEnabled = true;
                 downloadProgressLabel.Content = "";
-                updateCheckBoxAccessibiity();
+                UpdateCheckBoxAccessibiity();
             }));
         }
 
