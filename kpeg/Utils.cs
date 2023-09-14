@@ -19,7 +19,7 @@ namespace kpeg
                 return -1;
             if (str.IndexOf("100% of") > -1)
                 return 100;
-            int FFmpegParseResult = FFmpegProcessStringToSeconds(str, duration);
+            double FFmpegParseResult = ProcessFFmpegStringToDouble(str, duration);
             if (FFmpegParseResult != -1)
                 return FFmpegParseResult;
 
@@ -30,7 +30,7 @@ namespace kpeg
                 return double.Parse(progress);
             return -1;
         }
-        public static int FFmpegProcessStringToSeconds(string str, TimeSpan duration)
+        public static double ProcessFFmpegStringToDouble(string str, TimeSpan duration)
         {
             if (str == null)
                 return -1;
@@ -41,7 +41,7 @@ namespace kpeg
                 return -1;
             try
             {
-                return (int)((TimeSpan.Parse(str.Substring(index + 5, 8)).TotalSeconds/duration.TotalSeconds)*100);
+                return ((TimeSpan.Parse(str.Substring(index + 5, 8)).TotalSeconds/duration.TotalSeconds)*100);
             }
             catch
             {
