@@ -36,17 +36,15 @@ namespace kpeg.Downloading.ProcessContainers
             Settings.Default.Save();
             ProcessStartInfo info = new ProcessStartInfo();
             info.FileName = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Resources\\yt-dlp.exe";
-            bool audioOnly = (bool)SettingsManager.Get("downloadAudioOnly");
-            bool openDirectory = (bool)SettingsManager.Get("openDirectoryAfterDownload");
-            bool convertToMp3 = (bool)SettingsManager.Get("downloadAudioAsMp3");
-            bool convertToMp4 = (bool)SettingsManager.Get("convertToMp4");
+            bool audioOnly = (bool)SettingsManager.Get(Setting.DownloadAudioOnly);
+            bool openDirectory = (bool)SettingsManager.Get(Setting.OpenDirectoryAfterDownload);
+            bool convertToMp3 = (bool)SettingsManager.Get(Setting.DownloadAudioAsWav);
+            bool convertToMp4 = (bool)SettingsManager.Get(Setting.ConvertToMp4);
             bool isPlaylist = Utils.IsPlayList(url);
-            bool downloadClip = (bool)SettingsManager.Get("downloadClip");
+            bool downloadClip = (bool)SettingsManager.Get(Setting.DownloadClip);
             currentItem = 0;
             maxItems = 0;
             lastProgress = -1;
-            //if (audioOnly)
-            //    convertToMp4 = false;
             if (audioOnly)
             {
                 info.Arguments += "-f \"bestaudio\" -x";
@@ -57,18 +55,18 @@ namespace kpeg.Downloading.ProcessContainers
             {
                 info.Arguments += "-S vcodec:h264,res,acodec:m4a";
             }
-            if ((bool)SettingsManager.Get("setModifiedDate"))
+            if ((bool)SettingsManager.Get(Setting.SetModifiedDate))
                 info.Arguments += " --no-mtime";
 
             if (downloadClip)
             {
                 TimeSpan clipStartSpan = TimeSpan.FromSeconds(clipStart);
                 TimeSpan clipEndSpan = TimeSpan.FromSeconds(clipEnd);
-                info.Arguments += $" --download-sections *{clipStartSpan.Hours}:{clipStartSpan.Minutes}:{clipStartSpan.Seconds}-{clipEndSpan.Hours}:{clipEndSpan.Minutes}:{clipEndSpan.Seconds} --";
+                info.Arguments += $" --download-sections *{clipStartSpan.Hours}:{clipStartSpan.Minutes}:{clipStartSpan.Seconds}-{clipEndSpan.Hours}:{clipEndSpan.Minutes}:{clipEndSpan.Seconds} --force-keyframes-at-cuts";
             }
 
             info.Arguments += " " + url;
-            info.WorkingDirectory = (string)SettingsManager.Get("downloadDirectory");
+            info.WorkingDirectory = (string)SettingsManager.Get(Setting.DownloadDirectory);
             info.CreateNoWindow = true;
             info.UseShellExecute = false;
             info.RedirectStandardOutput = true;
@@ -106,55 +104,6 @@ namespace kpeg.Downloading.ProcessContainers
                 p.BeginOutputReadLine();
                 p.WaitForExit();
             }
-
-
-
-            //if ((!audioOnly && convertToMp4))
-            //{
-            //    string outputName = "";
-            //    try
-            //    {
-            //        outputName = Regex.Match(output, "\\[Merger\\] Merging formats into \"[^\"]*\"", RegexOptions.IgnoreCase).ToString().Substring(31).TrimEnd(new char[] { '"' });
-            //    }
-            //    catch
-            //    {
-            //        try
-            //        {
-            //            outputName = output.Substring(output.IndexOf("[ExtractAudio] Destination: ") + "[ExtractAudio] Destination: ".Length, output.IndexOf("\n", output.IndexOf("[ExtractAudio] Destination:")) - output.IndexOf("[ExtractAudio] Destination:") - "[ExtractAudio] Destination:".Length-1);
-            //        }
-            //        catch
-            //        {
-            //            DownloadWindow.GetInstance().EnableDownloadChildren();
-            //            if (openDirectory)
-            //                Process.Start(info.WorkingDirectory);
-            //            return;
-            //        }
-            //    }
-            //    string conversionArguments = "";
-            //    string conversionPath = Path.Combine((string)SettingsManager.Get("downloadDirectory"),outputName);
-            //    string inputExtension = outputName.Split(new char[] { '.' }, System.StringSplitOptions.RemoveEmptyEntries).Last();
-            //    string outputExtension = "c."+inputExtension;
-
-            //    if (!convertToMp4)
-            //    {
-            //        conversionArguments += " -c:a copy";
-            //        if (!audioOnly)
-            //            conversionArguments += " -c:v copy";
-            //    }
-            //    else
-            //        outputExtension = "c.mp4";
-
-            //    MainWindow.GetInstance().Dispatcher.Invoke(() =>
-            //    {
-            //        DownloadWindow.GetInstance().GetProgressBarLabel().Content = "Converting";
-            //    });
-            //    await DownloadConverter.GetInstance().ConvertDownloadedVideo(conversionPath, conversionArguments, conversionPath.Substring(0,conversionPath.Length-inputExtension.Length)+outputExtension);
-            //    File.Delete(conversionPath);
-            //    MainWindow.GetInstance().Dispatcher.Invoke(() =>
-            //    {
-            //        DownloadWindow.GetInstance().GetProgressBarLabel().Content = "";
-            //    });
-            //}
 
             DownloadWindow.GetInstance().EnableDownloadChildren();
             if (openDirectory)

@@ -64,7 +64,7 @@ namespace kpeg.Downloading
             downloadGrid.Children.Add(setDateModifiedToCurrentCheckBox);
             downloadGrid.Children.Add(clipSelector);
 
-            openDirectoryCheckBox.IsChecked = (bool)SettingsManager.Get("openDirectoryAfterDownload");
+            openDirectoryCheckBox.IsChecked = (bool)SettingsManager.Get(Setting.OpenDirectoryAfterDownload);
             openDirectoryCheckBox.FontSize = 16;
             openDirectoryCheckBox.Foreground = System.Windows.Media.Brushes.White;
             openDirectoryCheckBox.VerticalAlignment = VerticalAlignment.Top;
@@ -75,7 +75,7 @@ namespace kpeg.Downloading
             openDirectoryCheckBox.Checked += OpenDirectoryCheckBoxChanged;
             openDirectoryCheckBox.Unchecked += OpenDirectoryCheckBoxChanged;
 
-            openConverterCheckBox.IsChecked = (bool)SettingsManager.Get("openConverterAfterDownload");
+            openConverterCheckBox.IsChecked = (bool)SettingsManager.Get(Setting.OpenConverterAfterDownload);
             openConverterCheckBox.FontSize = 16;
             openConverterCheckBox.Foreground = System.Windows.Media.Brushes.White;
             openConverterCheckBox.VerticalAlignment = VerticalAlignment.Top;
@@ -86,7 +86,7 @@ namespace kpeg.Downloading
             openConverterCheckBox.Checked += OpenConverterCheckBoxChanged;
             openConverterCheckBox.Unchecked += OpenConverterCheckBoxChanged;
 
-            convertToMp4CheckBox.IsChecked = (bool)SettingsManager.Get("convertToMp4");
+            convertToMp4CheckBox.IsChecked = (bool)SettingsManager.Get(Setting.ConvertToMp4);
             convertToMp4CheckBox.FontSize = 16;
             convertToMp4CheckBox.Foreground = System.Windows.Media.Brushes.White;
             convertToMp4CheckBox.VerticalAlignment = VerticalAlignment.Top;
@@ -97,7 +97,7 @@ namespace kpeg.Downloading
             convertToMp4CheckBox.Checked += Mp4ConvertCheckBoxChanged;
             convertToMp4CheckBox.Unchecked += Mp4ConvertCheckBoxChanged;
 
-            audioOnlyCheckBox.IsChecked = (bool)SettingsManager.Get("downloadAudioOnly");
+            audioOnlyCheckBox.IsChecked = (bool)SettingsManager.Get(Setting.DownloadAudioOnly);
             audioOnlyCheckBox.FontSize = 16;
             audioOnlyCheckBox.Foreground = System.Windows.Media.Brushes.White;
             audioOnlyCheckBox.VerticalAlignment = VerticalAlignment.Top;
@@ -108,7 +108,7 @@ namespace kpeg.Downloading
             audioOnlyCheckBox.Checked += AudioOnlyCheckBoxChanged;
             audioOnlyCheckBox.Unchecked += AudioOnlyCheckBoxChanged;
 
-            convertToMp3CheckBox.IsChecked = (bool)SettingsManager.Get("downloadAudioAsMp3");
+            convertToMp3CheckBox.IsChecked = (bool)SettingsManager.Get(Setting.DownloadAudioAsWav);
             convertToMp3CheckBox.FontSize = 16;
             convertToMp3CheckBox.Foreground = System.Windows.Media.Brushes.White;
             convertToMp3CheckBox.VerticalAlignment = VerticalAlignment.Top;
@@ -119,7 +119,7 @@ namespace kpeg.Downloading
             convertToMp3CheckBox.Checked += Mp3ConvertCheckBoxChanged;
             convertToMp3CheckBox.Unchecked += Mp3ConvertCheckBoxChanged;
 
-            setDateModifiedToCurrentCheckBox.IsChecked = (bool)SettingsManager.Get("setModifiedDate");
+            setDateModifiedToCurrentCheckBox.IsChecked = (bool)SettingsManager.Get(Setting.SetModifiedDate);
             setDateModifiedToCurrentCheckBox.FontSize = 16;
             setDateModifiedToCurrentCheckBox.Foreground = System.Windows.Media.Brushes.White;
             setDateModifiedToCurrentCheckBox.VerticalAlignment = VerticalAlignment.Top;
@@ -137,7 +137,7 @@ namespace kpeg.Downloading
             //
 
             //clipVideoCheckBox.IsChecked = (bool)SettingsManager.Get("downloadClip");
-            clipSelector.ClipCheckBox.IsChecked = (bool)SettingsManager.Get("downloadClip");
+            clipSelector.ClipCheckBox.IsChecked = (bool)SettingsManager.Get(Setting.DownloadClip);
             clipSelector.ClipCheckBox.Checked += ClipCheckBox_Checked;
             clipSelector.ClipCheckBox.Unchecked += ClipCheckBox_Checked;
 
@@ -220,7 +220,7 @@ namespace kpeg.Downloading
 
         private void ClipCheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            SettingsManager.Set("downloadClip",clipSelector.ClipCheckBox.IsChecked);
+            SettingsManager.Set(Setting.DownloadClip,clipSelector.ClipCheckBox.IsChecked);
         }
 
         public Border GetBorder()
@@ -247,33 +247,33 @@ namespace kpeg.Downloading
         }
         private void DownloadDirectoryChanged(object sender, RoutedEventArgs e)
         {
-            SettingsManager.Set("downloadDirectory", textBox2.Text);
+            SettingsManager.Set(Setting.DownloadDirectory, textBox2.Text);
         }
         private void OpenDirectoryCheckBoxChanged(object sender, RoutedEventArgs e)
         {
-            SettingsManager.Set("openDirectoryAfterDownload", openDirectoryCheckBox.IsChecked.Value);
+            SettingsManager.Set(Setting.OpenDirectoryAfterDownload, openDirectoryCheckBox.IsChecked.Value);
         }
         private void OpenConverterCheckBoxChanged(object sender, RoutedEventArgs e)
         {
-            SettingsManager.Set("openConverterAfterDownload", openConverterCheckBox.IsChecked.Value);
+            SettingsManager.Set(Setting.OpenConverterAfterDownload, openConverterCheckBox.IsChecked.Value);
             UpdateCheckBoxAccessibiity();
         }
         private void Mp4ConvertCheckBoxChanged(object sender, RoutedEventArgs e)
         {
-            SettingsManager.Set("convertToMp4", convertToMp4CheckBox.IsChecked.Value);
+            SettingsManager.Set(Setting.ConvertToMp4, convertToMp4CheckBox.IsChecked.Value);
         }
         private void Mp3ConvertCheckBoxChanged(object sender, RoutedEventArgs e)
         {
-            SettingsManager.Set("downloadAudioAsMp3", convertToMp3CheckBox.IsChecked.Value);
+            SettingsManager.Set(Setting.DownloadAudioAsWav, convertToMp3CheckBox.IsChecked.Value);
         }
         private void AudioOnlyCheckBoxChanged(object sender, RoutedEventArgs e)
         {
-            SettingsManager.Set("downloadAudioOnly", audioOnlyCheckBox.IsChecked.Value);
+            SettingsManager.Set(Setting.DownloadAudioOnly, audioOnlyCheckBox.IsChecked.Value);
             UpdateCheckBoxAccessibiity();
         }
         private void SetDateCheckBoxChanged(object sender, RoutedEventArgs e)
         {
-            SettingsManager.Set("setModifiedDate", setDateModifiedToCurrentCheckBox.IsChecked.Value);
+            SettingsManager.Set(Setting.SetModifiedDate, setDateModifiedToCurrentCheckBox.IsChecked.Value);
         }
         private void BrowseButtonClicked(object sender, RoutedEventArgs e)
         {
@@ -429,7 +429,7 @@ namespace kpeg.Downloading
         }
         public void EnableClipSelector()
         {
-            clipSelector.ClipCheckBox.IsChecked = (bool)SettingsManager.Get("downloadClip");
+            clipSelector.ClipCheckBox.IsChecked = (bool)SettingsManager.Get(Setting.DownloadClip);
             clipSelector.ClipCheckBox.IsEnabled = true;
         }
     }

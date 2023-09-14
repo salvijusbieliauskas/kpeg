@@ -50,8 +50,8 @@ namespace kpeg
         }
         public static string GetDownloadFolderPath()
         {
-            if ((string)SettingsManager.Get("downloadDirectory") != null && (string)SettingsManager.Get("downloadDirectory") != "")
-                return (string)SettingsManager.Get("downloadDirectory");
+            if ((string)SettingsManager.Get(Setting.DownloadDirectory) != null && (string)SettingsManager.Get(Setting.DownloadDirectory) != "")
+                return (string)SettingsManager.Get(Setting.DownloadDirectory);
             if (System.Environment.OSVersion.Platform == System.PlatformID.Unix)
             {
                 string pathDownload = System.IO.Path.Combine(GetHomePath(), "Downloads");

@@ -1,4 +1,6 @@
-﻿using System.Windows.Controls;
+﻿using kpeg.Conversion.ProcessContainers;
+using System.IO;
+using System.Windows.Controls;
 
 namespace kpeg.Conversion
 {
@@ -93,6 +95,12 @@ namespace kpeg.Conversion
             MainWindow.GetInstance().FadeControl(1.0, 0.0, 0.5, GetActivePanel().Name);
             GetActivePanel().IsHitTestVisible = false;
             GetActivePanel().IsEnabled = false;
+        }
+
+        private void InputFileTextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (File.Exists(InputFileTextBox.Text))
+                FFProbeContainer.GetInstance().GetFileInfoJson($"-print format json -show_format -show_streams \"{InputFileTextBox.Text}\" > FFProbeResult.json");
         }
     }
 }

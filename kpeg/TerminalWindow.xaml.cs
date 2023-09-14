@@ -33,6 +33,7 @@ namespace kpeg
         public TerminalView YtdlpUpdaterView = new TerminalView("YtdlpUpdaterView");
         public TerminalView VideoMetadataDownloaderView = new TerminalView("VideoMetadataDownloaderView");
         public TerminalView DownloadedVideoConverterView = new TerminalView("DownloadedVideoConverterView");
+        public TerminalView FFProbeContainerView = new TerminalView("FFProbeContainerView");
         private TerminalWindow()
         {
             InitializeComponent();
@@ -42,6 +43,7 @@ namespace kpeg
             TerminalViewGrid.Children.Add(YtdlpUpdaterView);
             TerminalViewGrid.Children.Add(VideoMetadataDownloaderView);
             TerminalViewGrid.Children.Add(DownloadedVideoConverterView);
+            TerminalViewGrid.Children.Add(FFProbeContainerView);
             SetActiveView(VideoDownloaderView);
             this.IsHitTestVisible = false;
             this.IsEnabled = false;
@@ -93,6 +95,11 @@ namespace kpeg
         private void DownloadedVideoConverterClicked(object sender, RoutedEventArgs e)
         {
             SetActiveView(DownloadedVideoConverterView);
+        }
+
+        private void FFProbeContainerClicked(object sender, RoutedEventArgs e)
+        {
+            SetActiveView(FFProbeContainerView);
         }
     }
 }

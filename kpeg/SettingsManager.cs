@@ -39,30 +39,30 @@ namespace kpeg
                 new ExceptionWindow("An unknown exception has occured while saving settings",e);
             }
         }
-        public static void Set(string key, object value)
+        public static void Set(Setting key, object value)
         {
-            Settings[key] = value;
+            Settings[key.ToString()] = value;
             Save();
         }
 
-        public static object Get(string key)
+        public static object Get(Setting key)
         {
             if (Settings.Count == 0)
                 Load();
-            return Settings[key];
+            return Settings[key.ToString()];
         }
         private static Dictionary<string,object> GetDefaults()
         {
             return new Dictionary<string, object>()
             {
-                {"openDirectoryAfterDownload", true},
-                {"openConverterAfterDownload", false},
-                {"convertToMp4", true},
-                {"downloadAudioOnly", false},
-                {"downloadAudioAsMp3", false},
-                {"setModifiedDate", true},
-                {"downloadDirectory", ""},
-                {"downloadClip", false}
+                {Setting.OpenDirectoryAfterDownload.ToString(), true},
+                {Setting.OpenConverterAfterDownload.ToString(), false},
+                {Setting.ConvertToMp4.ToString(), true},
+                {Setting.DownloadAudioOnly.ToString(), false},
+                {Setting.DownloadAudioAsWav.ToString(), false},
+                {Setting.SetModifiedDate.ToString(), true},
+                {Setting.DownloadDirectory.ToString(), ""},
+                {Setting.DownloadClip.ToString(), false}
             };
         }
 
@@ -102,5 +102,16 @@ namespace kpeg
                 new ExceptionWindow("An unknown exception has occured while reading the settings file",e);
             }
         }
+    }
+    public enum Setting
+    {
+        OpenDirectoryAfterDownload,
+        OpenConverterAfterDownload,
+        ConvertToMp4,
+        DownloadAudioOnly,
+        DownloadAudioAsWav,
+        SetModifiedDate,
+        DownloadDirectory,
+        DownloadClip
     }
 }
