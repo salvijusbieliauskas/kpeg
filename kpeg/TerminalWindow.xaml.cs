@@ -44,11 +44,6 @@ namespace kpeg
             TerminalViewGrid.Children.Add(VideoMetadataDownloaderView);
             TerminalViewGrid.Children.Add(DownloadedVideoConverterView);
             TerminalViewGrid.Children.Add(FFProbeContainerView);
-            SetActiveView(VideoDownloaderView);
-            this.IsHitTestVisible = false;
-            this.IsEnabled = false;
-            this.Visibility = Visibility.Hidden;
-            //MainWindow.GetInstance().mainGrid.Children.Add(this);
         }
         private void SetActiveView(TerminalView activeView)
         {

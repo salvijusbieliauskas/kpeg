@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace kpeg.Conversion.UserControls
+namespace kpeg.UserControls
 {
     /// <summary>
     /// Interaction logic for ClipSelector.xaml
@@ -241,7 +241,7 @@ namespace kpeg.Conversion.UserControls
             {
             }
         }
-        private void UpdateTimeBars()
+        public void UpdateTimeBars()
         {
             UpdateBarFrom(GetFromSeconds());
             UpdateBarTo(GetToSeconds());

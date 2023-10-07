@@ -1,37 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using kpeg.Downloading;
+using System;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Drawing;
-using System.Windows.Shapes;
-using System.Drawing.Imaging;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media.Animation;
-using System.Diagnostics;
-using System.Security.Policy;
-using kpeg.Conversion;
-using kpeg.Downloading;
-using Microsoft.Win32;
-using System.Windows.Shell;
+using System.Windows.Media.Imaging;
 
 namespace kpeg
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
-        public System.Windows.Media.Brush mainBrush = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#FFFD0009");
-        public static UserControl activeWindow = null;
+        public System.Windows.Media.Brush MainBrush = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFromString("#FFFD0009");
+        public static UserControl ActiveWindow = null;
         private static MainWindow mainWindowInstance = null;
         private static double animationDuration = 0.5;
         public static MainWindow GetInstance()
@@ -45,21 +26,37 @@ namespace kpeg
             InitializeComponent();
             mediaElement.Source = new Uri("Resources/ahri.wmv", UriKind.Relative);
             FadeInWindow(StartingWindow.GetInstance(), false);
+            this.Height = (double)SettingsManager.Get(Setting.WindowHeight);
+            this.Width = (double)SettingsManager.Get(Setting.WindowWidth);
+            SetStartingWindowPosition();
+            if ((bool)SettingsManager.Get(Setting.IsMaximized))
+                SetMaximizedState();
+        }
+        private void SetStartingWindowPosition()
+        {
+            object lastPositionTop = SettingsManager.Get(Setting.LastPositionTop);
+            object lastPositionLeft = SettingsManager.Get(Setting.LastPositionLeft);
+            if (lastPositionTop == null || (lastPositionTop.GetType().Equals(typeof(string)) && (string)lastPositionTop=="NaN")) 
+            {
+                lastPositionTop = this.Top;
+            }
+            if (lastPositionLeft == null || (lastPositionLeft.GetType().Equals(typeof(string)) && (string)lastPositionLeft == "NaN"))
+            {
+                lastPositionLeft = this.Left;
+            }
+            this.Left = (double)lastPositionLeft;
+            this.Top = (double)lastPositionTop;
         }
 
         private void TerminalWindowButton_Click(object sender, RoutedEventArgs e)
         {
-            if (TerminalWindow.GetInstance().IsEnabled)
+            if (mainWindowContentGrid.Children.Contains(TerminalWindow.GetInstance()))
             {
-                TerminalWindow.GetInstance().Visibility = Visibility.Hidden;
-                TerminalWindow.GetInstance().IsHitTestVisible = false;
-                TerminalWindow.GetInstance().IsEnabled = false;
+                mainWindowContentGrid.Children.Remove(TerminalWindow.GetInstance());
             }
             else
             {
-                TerminalWindow.GetInstance().Visibility = Visibility.Visible;
-                TerminalWindow.GetInstance().IsHitTestVisible = true;
-                TerminalWindow.GetInstance().IsEnabled = true;
+                mainWindowContentGrid.Children.Add(TerminalWindow.GetInstance());
             }
 
         }
@@ -83,14 +80,14 @@ namespace kpeg
         }
         private void FadeOutCurrent()
         {
-            FadeControl(1.0, 0.0, animationDuration, activeWindow);
-            UserControl windowToRemove = activeWindow;
+            FadeControl(1.0, 0.0, animationDuration, ActiveWindow);
+            UserControl windowToRemove = ActiveWindow;
             Task.Run(() =>
             {
                 System.Threading.Thread.Sleep((int)(animationDuration * 1000));
-                Dispatcher.Invoke(new Action(() => 
+                Dispatcher.Invoke(new Action(() =>
                 {
-                    this.mainWindowDockPanel.Children.Remove(windowToRemove);
+                    this.mainWindowContentGrid.Children.Remove(windowToRemove);
                 }));
             });
         }
@@ -101,19 +98,29 @@ namespace kpeg
         }
         public void FadeInWindow(UserControl window, bool delayed)
         {
-            if(activeWindow!=null && !activeWindow.Equals(window))
+            if (ActiveWindow != null && !ActiveWindow.Equals(window))
                 FadeOutCurrent();
+            if (!window.Equals(StartingWindow.GetInstance()))
+            {
+                FadeControl(1.0, 0.0, animationDuration, mediaElement);
+            }
+            else
+            {
+                FadeControl(0.0, 1.0, animationDuration, mediaElement);
+            }
+            if (window.Equals(ActiveWindow))
+                return;
 
-            this.mainWindowDockPanel.Children.Add(window);
+            this.mainWindowContentGrid.Children.Insert(0, window);
             if (delayed)
-                FadeControl(-1.0, 1.0, animationDuration*2, window);
+                FadeControl(-1.0, 1.0, animationDuration * 2, window);
             else
                 FadeControl(0.0, 1.0, animationDuration, window);
-            activeWindow = window;
+            ActiveWindow = window;
         }
         private void StartClicked(object sender, RoutedEventArgs e)
         {
-            if (activeWindow.Equals(StartingWindow.GetInstance()))
+            if (ActiveWindow.Equals(StartingWindow.GetInstance()))
                 return;
             FadeInWindow(StartingWindow.GetInstance(), true);
         }
@@ -150,11 +157,19 @@ namespace kpeg
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             Utils.CleanupFiles();
+            SettingsManager.Set(Setting.LastPositionTop, this.Top);
+            SettingsManager.Set(Setting.LastPositionLeft, this.Left);
+            SettingsManager.Set(Setting.IsMaximized, this.WindowState==WindowState.Maximized);
+            if (this.WindowState != WindowState.Maximized)
+            {
+                SettingsManager.Set(Setting.WindowWidth, this.Width);
+                SettingsManager.Set(Setting.WindowHeight, this.Height);
+            }
         }
 
         private void WindowActivated(object sender, EventArgs e)
         {
-            if (activeWindow.Equals(DownloadWindow.GetInstance()) && !Utils.IsLinkValid(DownloadWindow.GetInstance().GetLinkBox().Text))
+            if (!Utils.IsLinkValid(DownloadWindow.GetInstance().GetLinkBox().Text))
                 CopyLinkFromClipboard();
         }
 
@@ -162,10 +177,43 @@ namespace kpeg
         {
             Keyboard.ClearFocus();
         }
-
+        private void SetNormalState()
+        {
+            this.WindowState = WindowState.Normal;
+            maximizeBrush.ImageSource = new BitmapImage(new Uri("pack://application:,,,/kpeg;component/Resources/maximizeIcon.png"));
+            this.ResizeMode = ResizeMode.CanResize;
+        }
+        private void SetMaximizedState()
+        {
+            System.Drawing.Rectangle r = System.Windows.Forms.Screen.GetWorkingArea(new System.Drawing.Point((int)this.Left + (int)(this.Width / 2), (int)this.Top + (int)(this.Height / 2)));
+            SettingsManager.Set(Setting.LastPositionTop, this.Top);
+            SettingsManager.Set(Setting.LastPositionLeft, this.Left);
+            SettingsManager.Set(Setting.WindowWidth, this.Width);
+            SettingsManager.Set(Setting.WindowHeight, this.Height);
+            this.MaxWidth = r.Width;
+            this.MaxHeight = r.Height;
+            this.ResizeMode = ResizeMode.NoResize;
+            this.WindowState = WindowState.Maximized;
+            maximizeBrush.ImageSource = new BitmapImage(new Uri("pack://application:,,,/kpeg;component/Resources/unMaximizeIcon.png"));
+        }
+        private void AdjustWindowSize()
+        {
+            if (this.WindowState == WindowState.Maximized)
+            {
+                SetNormalState();
+            }
+            else
+            {
+                SetMaximizedState();
+            }
+        }
         private void mediaElement_MediaFailed(object sender, ExceptionRoutedEventArgs e)
         {
             new ExceptionWindow(e.ErrorException);
+        }
+        private void MaximizeClick(object sender, RoutedEventArgs e)
+        {
+            AdjustWindowSize();
         }
     }
 }

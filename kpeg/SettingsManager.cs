@@ -55,7 +55,7 @@ namespace kpeg
             }
             catch(KeyNotFoundException)
             {
-                SetDefaults();
+                UpdateSettings();
                 return Settings[key.ToString()];
             }
         }
@@ -70,10 +70,24 @@ namespace kpeg
                 {Setting.DownloadAudioAsWav.ToString(), false},
                 {Setting.SetModifiedDate.ToString(), true},
                 {Setting.DownloadDirectory.ToString(), ""},
-                {Setting.DownloadClip.ToString(), false}
+                {Setting.DownloadClip.ToString(), false},
+                {Setting.WindowWidth.ToString(), 960.0},
+                {Setting.WindowHeight.ToString(), 590.0},
+                {Setting.LastPositionTop.ToString(), null},
+                {Setting.LastPositionLeft.ToString(), null},
+                {Setting.IsMaximized.ToString(), false}
             };
         }
+        private static void UpdateSettings()
+        {
+            Dictionary<string,object> defaultSettings = GetDefaults();
+            foreach(string key in defaultSettings.Keys)
+            {
+                if(!Settings.ContainsKey(key))
+                    Settings.Add(key, defaultSettings[key]);
+            }
 
+        }
         public static void SetDefaults()
         {
             Settings = GetDefaults();
@@ -96,10 +110,9 @@ namespace kpeg
                 }
 
                 if (Settings == null || Settings.Count != GetDefaults().Count)
-                {
-                    Settings = GetDefaults();
+                    UpdateSettings();
+                if (Settings == null || Settings.Count != GetDefaults().Count)
                     new ExceptionWindow("Failed loading settings, using defaults");
-                }
             }
             catch (IOException e)
             {
@@ -120,6 +133,11 @@ namespace kpeg
         DownloadAudioAsWav,
         SetModifiedDate,
         DownloadDirectory,
-        DownloadClip
+        DownloadClip,
+        WindowWidth,
+        WindowHeight,
+        LastPositionTop,
+        LastPositionLeft,
+        IsMaximized
     }
 }

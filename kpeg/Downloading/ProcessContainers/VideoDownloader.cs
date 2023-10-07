@@ -148,7 +148,7 @@ namespace kpeg.Downloading.ProcessContainers
                     if (progress == 100 || str.IndexOf("100% of") > -1)
                         DownloadWindow.GetInstance().GetProgressBar().Foreground = Brushes.Green;
                     else
-                        DownloadWindow.GetInstance().GetProgressBar().Foreground = MainWindow.GetInstance().mainBrush;
+                        DownloadWindow.GetInstance().GetProgressBar().Foreground = MainWindow.GetInstance().MainBrush;
                 }
 
                 DownloadWindow.GetInstance().GetProgressBarLabel().Content = audioOnly?"Downloading audio":"Downloading video";

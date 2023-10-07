@@ -11,7 +11,7 @@ using System.Windows.Media.Imaging;
 using System.IO;
 using System.Security.Policy;
 using kpeg.Downloading.ProcessContainers;
-using kpeg.Conversion.UserControls;
+using kpeg.UserControls;
 using System.Windows.Media.Media3D;
 using System.Windows.Input;
 using System.Runtime.InteropServices;
@@ -30,12 +30,6 @@ namespace kpeg.Downloading
         private DownloadWindow()
         {
             InitializeComponent();
-            //MainWindow.GetInstance().RegisterName(Name, this);
-            //MainWindow.GetInstance().mainGrid.Children.Add(this);
-
-            //IsEnabled = false;
-            //IsHitTestVisible = false;
-            //Opacity = 0;
 
             openDirectoryCheckBox.IsChecked = (bool)SettingsManager.Get(Setting.OpenDirectoryAfterDownload);
 
@@ -49,9 +43,9 @@ namespace kpeg.Downloading
             convertAudioCheckBox.IsChecked = (bool)SettingsManager.Get(Setting.DownloadAudioAsWav);
 
 
-            clipSelector.ClipCheckBox.IsChecked = (bool)SettingsManager.Get(Setting.DownloadClip);
-            clipSelector.ClipCheckBox.Checked += ClipCheckBox_Checked;
-            clipSelector.ClipCheckBox.Unchecked += ClipCheckBox_Checked;
+            ClipSelector.ClipCheckBox.IsChecked = (bool)SettingsManager.Get(Setting.DownloadClip);
+            ClipSelector.ClipCheckBox.Checked += ClipCheckBox_Checked;
+            ClipSelector.ClipCheckBox.Unchecked += ClipCheckBox_Checked;
 
 
             textBox2.TextChanged += DownloadDirectoryChanged;
@@ -66,7 +60,7 @@ namespace kpeg.Downloading
 
         private void ClipCheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            SettingsManager.Set(Setting.DownloadClip, clipSelector.ClipCheckBox.IsChecked);
+            SettingsManager.Set(Setting.DownloadClip, ClipSelector.ClipCheckBox.IsChecked);
         }
 
         public TextBlock GetVideoTitleBlock()
@@ -186,8 +180,8 @@ namespace kpeg.Downloading
             }
 
             string url = textBox1.Text;
-            int fromSeconds = clipSelector.GetFromSeconds();
-            int toSeconds = clipSelector.GetToSeconds();
+            int fromSeconds = ClipSelector.GetFromSeconds();
+            int toSeconds = ClipSelector.GetToSeconds();
             Task.Run(() => VideoDownloader.GetInstance().DownloadVideo(url, fromSeconds, toSeconds));
         }
         public void UpdateCheckBoxAccessibiity()
@@ -237,37 +231,44 @@ namespace kpeg.Downloading
 
         public TextBox GetStartMinBox()
         {
-            return clipSelector.FromMinBox;
+            return ClipSelector.FromMinBox;
         }
         public TextBox GetEndMinBox()
         {
-            return clipSelector.ToMinBox;
+            return ClipSelector.ToMinBox;
         }
         public TextBox GetStartSecBox()
         {
-            return clipSelector.FromSecBox;
+            return ClipSelector.FromSecBox;
         }
         public TextBox GetEndSecBox()
         {
-            return clipSelector.ToSecBox;
+            return ClipSelector.ToSecBox;
         }
         public TextBox GetStartHourBox()
         {
-            return clipSelector.FromHourBox;
+            return ClipSelector.FromHourBox;
         }
         public TextBox GetEndHourBox()
         {
-            return clipSelector.ToHourBox;
+            return ClipSelector.ToHourBox;
         }
         public void DisableClipSelector()
         {
-            clipSelector.ClipCheckBox.IsChecked = false;
-            clipSelector.ClipCheckBox.IsEnabled = false;
+            ClipSelector.ClipCheckBox.IsChecked = false;
+            ClipSelector.ClipCheckBox.IsEnabled = false;
         }
         public void EnableClipSelector()
         {
-            clipSelector.ClipCheckBox.IsChecked = (bool)SettingsManager.Get(Setting.DownloadClip);
-            clipSelector.ClipCheckBox.IsEnabled = true;
+            ClipSelector.ClipCheckBox.IsChecked = (bool)SettingsManager.Get(Setting.DownloadClip);
+            ClipSelector.ClipCheckBox.IsEnabled = true;
+        }
+
+        private void DownloadWindowSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            ClipSelector.UpdateTimeBars();
+            if(!this.ActualHeight.Equals(double.NaN))
+                videoThumbnail.MaxHeight = (580 / 2.8)+(this.ActualHeight-580);
         }
     }
 }

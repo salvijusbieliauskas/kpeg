@@ -6,7 +6,6 @@
              xmlns:local="clr-namespace:kpeg"
              mc:Ignorable="d" 
             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" xmlns:res="clr-namespace:kpeg.Properties"
-            xmlns:userControls="clr-namespace:kpeg.Conversion.UserControls"
             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
             TextElement.FontWeight="Regular"
             TextElement.FontSize="13"

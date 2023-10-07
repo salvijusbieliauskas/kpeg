@@ -113,8 +113,8 @@ namespace kpeg.Downloading.ProcessContainers
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     DownloadWindow.GetInstance().EnableClipSelector();
-                    DownloadWindow.GetInstance().clipSelector.VideoDuration = (int)(Int64)metadata["duration"];
-                    DownloadWindow.GetInstance().clipSelector.UserControl_Loaded(null, null);
+                    DownloadWindow.GetInstance().ClipSelector.VideoDuration = (int)(Int64)metadata["duration"];
+                    DownloadWindow.GetInstance().ClipSelector.UserControl_Loaded(null, null);
                 });
             }
             else

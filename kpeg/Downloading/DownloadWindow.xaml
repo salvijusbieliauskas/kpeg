@@ -4,9 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:kpeg.Downloading"
-             xmlns:custom="clr-namespace:kpeg.Conversion.UserControls"
+             xmlns:userControls="clr-namespace:kpeg.UserControls"
              mc:Ignorable="d" 
-             MinHeight="560" MinWidth="960" Name="downloadWindow" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+             MinHeight="560" MinWidth="960" Name="downloadWindow" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SizeChanged="DownloadWindowSizeChanged">
     <Grid Margin="0,10,0,0" x:Name="DownloadGrid">
         <StackPanel Orientation="Vertical">
             <Grid>
@@ -25,15 +25,19 @@
                     </StackPanel>
                 </StackPanel>
             </Grid>
-            <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" DockPanel.Dock="Left" x:Name="videoTitleBlock" FontSize="30" Foreground="White" MinHeight="200" MinWidth="400" TextWrapping="Wrap" TextAlignment="Center"/>
-                <Image HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="videoThumbnail" DockPanel.Dock="Left" Stretch="Uniform" MinWidth="400" MinHeight="200" IsHitTestVisible="False"/>
-            </DockPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" DockPanel.Dock="Left" x:Name="videoTitleBlock" FontSize="30" Foreground="White" MinHeight="200" MinWidth="400" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" Grid.Column="0"/>
+                <Image x:Name="videoThumbnail" DockPanel.Dock="Right" Stretch="Uniform" MinWidth="400" MinHeight="200" IsHitTestVisible="False" Margin="10,10,10,10" Grid.Column="1"/>
+            </Grid>
         </StackPanel>
 
         <StackPanel Orientation="Vertical" VerticalAlignment="Bottom">
             <Button x:Name="downloadConfirmButton" IsEnabled="False" Content="Download" Padding="0,0,0,0" Width="500" Background="#FFFD0009" Click="DownloadConfirmButtonClicked"/>
-            <custom:ClipSelector VerticalAlignment="Bottom" x:Name="clipSelector"/>
+            <userControls:ClipSelector VerticalAlignment="Bottom" x:Name="ClipSelector"/>
             <Label FontSize="15" Content="" HorizontalAlignment="Center" x:Name="downloadProgressLabel"/>
             <ProgressBar x:Name="downloadProgressBar" MaxHeight="30" MinHeight="30" VerticalAlignment="Bottom" Value="0" Background="#181818" BorderBrush="#181818"/>
         </StackPanel>
