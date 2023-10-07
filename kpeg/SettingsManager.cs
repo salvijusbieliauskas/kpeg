@@ -49,7 +49,15 @@ namespace kpeg
         {
             if (Settings.Count == 0)
                 Load();
-            return Settings[key.ToString()];
+            try
+            {
+                return Settings[key.ToString()];
+            }
+            catch(KeyNotFoundException)
+            {
+                SetDefaults();
+                return Settings[key.ToString()];
+            }
         }
         private static Dictionary<string,object> GetDefaults()
         {

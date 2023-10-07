@@ -91,6 +91,8 @@ namespace kpeg
         }
         public static bool IsLinkValid(string link)
         {
+            if (link.IndexOf("twitter") > -1 && link.IndexOf("/status/") > -1)
+                return true;
             string linkType1 = "youtu.be/";
             string linkType2 = "watch?v=";
             string linkType3 = "shorts/";
@@ -108,6 +110,12 @@ namespace kpeg
             {
                 return link.Length >= link.IndexOf(linkType3) + 11 + linkType3.Length;
             }
+        }
+        public static bool IsLinkTwitter(string link)
+        {
+            if (link.IndexOf("twitter") > -1 && link.IndexOf("/status/") > -1)
+                return true;
+            return false;
         }
         public static BitmapImage UriToSource(string path)
         {

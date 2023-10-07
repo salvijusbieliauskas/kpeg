@@ -13,6 +13,51 @@
         TextElement.FontSize="13"
         TextOptions.TextFormattingMode="Ideal"
         TextOptions.TextRenderingMode="Auto"
-        Background="{DynamicResource MaterialDesignPaper}"
-        FontFamily="{DynamicResource MaterialDesignFont}" ResizeMode="NoResize" WindowStyle="None" Closing="Window_Closing" MouseDown="Window_MouseDown" Activated="WindowActivated">
+        FontFamily="{DynamicResource MaterialDesignFont}" ResizeMode="CanResize" WindowStyle="None" Closing="Window_Closing" MouseDown="Window_MouseDown" Activated="WindowActivated">
+    <Window.Background>
+        <VisualBrush>
+            <VisualBrush.Visual>
+                <Border Background="{DynamicResource MaterialDesignDarkBackground}">
+                    <MediaElement x:Name="mediaElement" Loaded="VideoLoaded" MediaFailed="mediaElement_MediaFailed" MediaEnded="VideoEnded" Stretch="Fill" MinHeight="560" MinWidth="960" LoadedBehavior="Manual" Volume="0" Opacity="0" Margin="0,30,0,0"/>
+                </Border>
+            </VisualBrush.Visual>
+        </VisualBrush>
+    </Window.Background>
+    <WindowChrome.WindowChrome>
+        <WindowChrome 
+        CaptionHeight="0"
+        ResizeBorderThickness="5" />
+    </WindowChrome.WindowChrome>
+    <DockPanel x:Name="mainWindowDockPanel">
+        <Grid x:Name="barGrid" Height="30" VerticalAlignment="Top" Background="#181818" MouseDown="TopBarMouseDown" DockPanel.Dock="Top">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" FlowDirection="RightToLeft">
+                <Button x:Name="exitButton" Height="30" Width="30" HorizontalAlignment="Right" BorderBrush="{x:Null}" Foreground="{x:Null}" Click="CloseClick">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/Resources/exitbutton.png"/>
+                    </Button.Background>
+                </Button>
+                <Button x:Name="minimizeButton" Height="30" Width="30" HorizontalAlignment="Right" BorderBrush="{x:Null}" Foreground="{x:Null}" Click="minimizeClick">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/Resources/minimizebutton.png"/>
+                    </Button.Background>
+                </Button>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" FlowDirection="LeftToRight">
+                <Button Foreground="{x:Null}" BorderBrush="{x:Null}" Width="95" Click="StartClicked">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/Resources/topLogo.png"/>
+                    </Button.Background>
+                </Button>
+                <Button Height="30" Width="30" Click="TerminalWindowButton_Click" BorderBrush="{x:Null}">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/Resources/terminalIcon.png"/>
+                    </Button.Background>
+                    <Button.Foreground>
+                        <ImageBrush ImageSource="/Resources/terminalIcon.png"/>
+                    </Button.Foreground>
+                </Button>
+            </StackPanel>
+        </Grid>
+    </DockPanel>
 </Window>

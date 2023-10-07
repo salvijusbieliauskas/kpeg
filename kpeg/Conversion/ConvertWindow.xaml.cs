@@ -13,15 +13,13 @@ namespace kpeg.Conversion
 
         private ConvertWindow()
         {
-            MainWindow.GetInstance().RegisterName(gifConversionPanel.Name, gifConversionPanel);
-            MainWindow.GetInstance().RegisterName(videoConversionPanel.Name, videoConversionPanel);
-            MainWindow.GetInstance().RegisterName(imageConversionPanel.Name, imageConversionPanel);
+            //MainWindow.GetInstance().RegisterName(gifConversionPanel.Name, gifConversionPanel);
+            //MainWindow.GetInstance().RegisterName(videoConversionPanel.Name, videoConversionPanel);
+            //MainWindow.GetInstance().RegisterName(imageConversionPanel.Name, imageConversionPanel);
             InitializeComponent();
-            Opacity = 0.0;
-            MainWindow.GetInstance().RegisterName(Name, this);
-            MainWindow.GetInstance().mainGrid.Children.Add(this);
-            IsEnabled = false;
-            IsHitTestVisible = false;
+            //Opacity = 0.0;
+            //IsEnabled = false;
+            //IsHitTestVisible = false;
 
             gifConversionPanel.IsHitTestVisible = false;
             videoConversionPanel.IsHitTestVisible = false;
@@ -73,7 +71,7 @@ namespace kpeg.Conversion
         private void SetActivePanel(StackPanel stackPanel)
         {
             FadeOutCurrentPanel();
-            MainWindow.GetInstance().FadeControl(0.0, 1.0, 0.5, stackPanel.Name);
+            MainWindow.GetInstance().FadeControl(0.0, 1.0, 0.5, stackPanel);
             stackPanel.IsEnabled = true;
             stackPanel.IsHitTestVisible = true;
         }
@@ -92,7 +90,7 @@ namespace kpeg.Conversion
         {
             if (GetActivePanel() == null)
                 return;
-            MainWindow.GetInstance().FadeControl(1.0, 0.0, 0.5, GetActivePanel().Name);
+            MainWindow.GetInstance().FadeControl(1.0, 0.0, 0.5, GetActivePanel());
             GetActivePanel().IsHitTestVisible = false;
             GetActivePanel().IsEnabled = false;
         }

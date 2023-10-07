@@ -48,7 +48,7 @@ namespace kpeg
             this.IsHitTestVisible = false;
             this.IsEnabled = false;
             this.Visibility = Visibility.Hidden;
-            MainWindow.GetInstance().mainGrid.Children.Add(this);
+            //MainWindow.GetInstance().mainGrid.Children.Add(this);
         }
         private void SetActiveView(TerminalView activeView)
         {

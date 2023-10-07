@@ -1,0 +1,41 @@
+﻿<UserControl x:Class="kpeg.Downloading.DownloadWindow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:kpeg.Downloading"
+             xmlns:custom="clr-namespace:kpeg.Conversion.UserControls"
+             mc:Ignorable="d" 
+             MinHeight="560" MinWidth="960" Name="downloadWindow" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Grid Margin="0,10,0,0" x:Name="DownloadGrid">
+        <StackPanel Orientation="Vertical">
+            <Grid>
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
+                    <CheckBox Foreground="White" Checked="OpenDirectoryCheckBoxChanged" FontSize="16" Background="#FFFD0009" Unchecked="OpenDirectoryCheckBoxChanged" x:Name="openDirectoryCheckBox" Padding="0,0,0,3">Open directory after download</CheckBox>
+                    <CheckBox Foreground="White" Checked="OpenConverterCheckBoxChanged" FontSize="16" Background="#FFFD0009" Unchecked="OpenConverterCheckBoxChanged" x:Name="openConverterCheckBox" Padding="0,0,0,3">Open converter after download</CheckBox>
+                    <CheckBox Foreground="White" Checked="Mp4ConvertCheckBoxChanged" FontSize="16" Background="#FFFD0009" Unchecked="Mp4ConvertCheckBoxChanged" x:Name="convertToMp4CheckBox" Padding="0,0,0,3">Convert to mp4</CheckBox>
+                    <CheckBox Foreground="White" Checked="AudioOnlyCheckBoxChanged" FontSize="16" Background="#FFFD0009" Unchecked="AudioOnlyCheckBoxChanged" x:Name="audioOnlyCheckBox" Padding="0,0,0,3">Download audio only</CheckBox>
+                    <CheckBox Foreground="White" Checked="AudioConvertCheckboxChanged" FontSize="16" Background="#FFFD0009" Unchecked="AudioConvertCheckboxChanged" x:Name="convertAudioCheckBox" Padding="0,0,0,3">Convert audio to wav (slightly reduces quality)</CheckBox>
+                </StackPanel>
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Right">
+                    <TextBox x:Name="textBox1" Width="400" Height="30" TextAlignment="Center" TextChanged="TextBox_TextChanged" CaretBrush="#FFFD0009"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox x:Name="textBox2" Width="340" Height="30" TextAlignment="Center" TextChanged="TextBox2_TextChanged" CaretBrush="#FFFD0009"/>
+                        <Button x:Name="browseButton" Content="Browse" Width="60" Padding="0,0,0,0" Margin="3,3,3,3" Background="#FFFD0009" Click="BrowseButtonClicked"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+            <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" DockPanel.Dock="Left" x:Name="videoTitleBlock" FontSize="30" Foreground="White" MinHeight="200" MinWidth="400" TextWrapping="Wrap" TextAlignment="Center"/>
+                <Image HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="videoThumbnail" DockPanel.Dock="Left" Stretch="Uniform" MinWidth="400" MinHeight="200" IsHitTestVisible="False"/>
+            </DockPanel>
+        </StackPanel>
+
+        <StackPanel Orientation="Vertical" VerticalAlignment="Bottom">
+            <Button x:Name="downloadConfirmButton" IsEnabled="False" Content="Download" Padding="0,0,0,0" Width="500" Background="#FFFD0009" Click="DownloadConfirmButtonClicked"/>
+            <custom:ClipSelector VerticalAlignment="Bottom" x:Name="clipSelector"/>
+            <Label FontSize="15" Content="" HorizontalAlignment="Center" x:Name="downloadProgressLabel"/>
+            <ProgressBar x:Name="downloadProgressBar" MaxHeight="30" MinHeight="30" VerticalAlignment="Bottom" Value="0" Background="#181818" BorderBrush="#181818"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

@@ -1,0 +1,20 @@
+﻿<UserControl x:Class="kpeg.StartingWindow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:kpeg"
+             mc:Ignorable="d" 
+            xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" xmlns:res="clr-namespace:kpeg.Properties"
+            xmlns:userControls="clr-namespace:kpeg.Conversion.UserControls"
+            TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+            TextElement.FontWeight="Regular"
+            TextElement.FontSize="13"
+            TextOptions.TextFormattingMode="Ideal"
+            TextOptions.TextRenderingMode="Auto"
+            FontFamily="{DynamicResource MaterialDesignFont}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+    <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <Button x:Name="convertButton" Content="Convert" Click="ConvertClicked" Background="#FFFD0009" Width="200" Height="50" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,400,0" materialDesign:ElevationAssist.Elevation="Dp24"/>
+        <Button x:Name="downloadButton" Content="Download" Click="DownloadClicked" Background="#FFFD0009" Width="200" Height="50" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="400,0,0,0" materialDesign:ElevationAssist.Elevation="Dp24"/>
+    </Grid>
+</UserControl>

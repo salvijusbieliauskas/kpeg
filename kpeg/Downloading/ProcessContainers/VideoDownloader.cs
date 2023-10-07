@@ -62,8 +62,13 @@ namespace kpeg.Downloading.ProcessContainers
             {
                 TimeSpan clipStartSpan = TimeSpan.FromSeconds(clipStart);
                 TimeSpan clipEndSpan = TimeSpan.FromSeconds(clipEnd);
-                info.Arguments += $" --download-sections *{clipStartSpan.Hours}:{clipStartSpan.Minutes}:{clipStartSpan.Seconds}-{clipEndSpan.Hours}:{clipEndSpan.Minutes}:{clipEndSpan.Seconds} --force-keyframes-at-cuts";
+                info.Arguments += String.Format(" --download-sections *{0:00}:{1:00}:{2:00}-{3:00}:{4:00}:{5:00} --force-keyframes-at-cuts", clipStartSpan.Hours, clipStartSpan.Minutes, clipStartSpan.Seconds, clipEndSpan.Hours, clipEndSpan.Minutes, clipEndSpan.Seconds);//check if changes work
             }
+            if(Utils.IsLinkTwitter(url))
+            {
+                info.Arguments += " --username whereosbama --password pyncaloidas123";
+            }
+
 
             info.Arguments += " " + url;
             info.WorkingDirectory = (string)SettingsManager.Get(Setting.DownloadDirectory);
@@ -85,7 +90,7 @@ namespace kpeg.Downloading.ProcessContainers
                     {
                         TerminalWindow.GetInstance().VideoDownloaderView.TextBox.AppendText(e.Data.Trim() + '\n');
                     });
-                    processDownloadProgressString(e.Data, isPlaylist, audioOnly, clipEnd - clipStart);
+                    ProcessDownloadProgressString(e.Data, isPlaylist, audioOnly, clipEnd - clipStart);
                     output += e.Data+'\n';
                 };
                 p.ErrorDataReceived += (s, e) =>
@@ -96,7 +101,7 @@ namespace kpeg.Downloading.ProcessContainers
                     {
                         TerminalWindow.GetInstance().VideoDownloaderView.TextBox.AppendText(e.Data.Trim() + '\n');
                     });
-                    processDownloadProgressString(e.Data, isPlaylist, audioOnly, clipEnd - clipStart);
+                    ProcessDownloadProgressString(e.Data, isPlaylist, audioOnly, clipEnd - clipStart);
                     output += e.Data+'\n';
                 };
                 p.Start();
@@ -111,7 +116,7 @@ namespace kpeg.Downloading.ProcessContainers
         }
 
         double lastProgress = -1;
-        private void processDownloadProgressString(string str, bool isPlaylist, bool audioOnly, int durationSeconds)
+        private void ProcessDownloadProgressString(string str, bool isPlaylist, bool audioOnly, int durationSeconds)
         {
             if (str == null)
                 return;

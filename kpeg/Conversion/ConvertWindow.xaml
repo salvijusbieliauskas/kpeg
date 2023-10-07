@@ -13,48 +13,46 @@
     Background="{DynamicResource MaterialDesignPaper}"
     FontFamily="{DynamicResource MaterialDesignFont}" x:Name="ConvertWindowUserControl">
     <Grid x:Name="MainConvertGrid" x:FieldModifier="public">
-        <Border>
-            <StackPanel Orientation="Horizontal">
-                <Grid Width="719">
-                    <StackPanel Orientation="Vertical" x:Name="OutputStackPanel">
-                        <Label HorizontalAlignment="Center" FontSize="24" FontWeight="Bold">Output settings</Label>
-                        <Rectangle Width="719" Height="1" Fill="Black" />
-                        <Label HorizontalAlignment="Center" FontSize="20" Margin="0,10,0,0">Choose output type</Label>
-                        <ComboBox Width="300" FontSize="16" SelectedIndex="0" x:Name="TypeBox"
+        <StackPanel Orientation="Horizontal">
+            <Grid Width="719">
+                <StackPanel Orientation="Vertical" x:Name="OutputStackPanel">
+                    <Label HorizontalAlignment="Center" FontSize="24" FontWeight="Bold">Output settings</Label>
+                    <Rectangle Width="719" Height="1" Fill="Black" />
+                    <Label HorizontalAlignment="Center" FontSize="20" Margin="0,10,0,0">Choose output type</Label>
+                    <ComboBox Width="300" FontSize="16" SelectedIndex="0" x:Name="TypeBox"
                                   HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
                                   SelectionChanged="TypeSelectionBox_SelectionChanged">
-                            <ComboBoxItem>
-                                Video
-                            </ComboBoxItem>
-                            <ComboBoxItem>
-                                Image
-                            </ComboBoxItem>
-                            <ComboBoxItem>
-                                GIF
-                            </ComboBoxItem>
-                        </ComboBox>
-                        <Rectangle Width="719" Margin="0,10,0,0" Height="1" Fill="Black" />
-                        <Grid x:Name="OutputGrid" />
-                    </StackPanel>
-                </Grid>
-                <Rectangle VerticalAlignment="Stretch" Width="1" Margin="0,0,0,0" Stroke="Black" />
-                <Grid Width="240">
-                    <StackPanel Orientation="Vertical">
-                        <Label HorizontalAlignment="Center" FontSize="24" FontWeight="Bold">Input settings</Label>
-                        <Rectangle Width="240" Height="1" Fill="Black" />
-                        <TextBox VerticalAlignment="Top" Margin="0,10,0,0" Text="C:\Users\Administrator\Downloads"
+                        <ComboBoxItem>
+                            Video
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            Image
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            GIF
+                        </ComboBoxItem>
+                    </ComboBox>
+                    <Rectangle Width="719" Margin="0,10,0,0" Height="1" Fill="Black" />
+                    <Grid x:Name="OutputGrid" />
+                </StackPanel>
+            </Grid>
+            <Rectangle VerticalAlignment="Stretch" Width="1" Margin="0,0,0,0" Stroke="Black" />
+            <Grid Width="240">
+                <StackPanel Orientation="Vertical">
+                    <Label HorizontalAlignment="Center" FontSize="24" FontWeight="Bold">Input settings</Label>
+                    <Rectangle Width="240" Height="1" Fill="Black" />
+                    <TextBox VerticalAlignment="Top" Margin="0,10,0,0" Text="C:\Users\Administrator\Downloads"
                                  TextAlignment="Center" TextChanged="InputFileTextChanged" Name="InputFileTextBox"/>
-                        <Button VerticalAlignment="Top" Margin="0,5,0,0">Browse</Button>
-                        <Label>Resolution:</Label>
-                        <Label>Bitrate:</Label>
-                        <Label>Format:</Label>
-                        <Label>Frames:</Label>
-                        <Label>Framerate:</Label>
-                        <Label FontSize="18" HorizontalAlignment="Center">filename</Label>
-                        <Image Width="240" Height="240" />
-                    </StackPanel>
-                </Grid>
-            </StackPanel>
-        </Border>
+                    <Button VerticalAlignment="Top" Margin="0,5,0,0">Browse</Button>
+                    <Label>Resolution:</Label>
+                    <Label>Bitrate:</Label>
+                    <Label>Format:</Label>
+                    <Label>Frames:</Label>
+                    <Label>Framerate:</Label>
+                    <Label FontSize="18" HorizontalAlignment="Center">filename</Label>
+                    <Image Width="240" Height="240" />
+                </StackPanel>
+            </Grid>
+        </StackPanel>
     </Grid>
 </UserControl>
