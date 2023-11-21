@@ -64,10 +64,6 @@ namespace kpeg.Downloading.ProcessContainers
                 TimeSpan clipEndSpan = TimeSpan.FromSeconds(clipEnd);
                 info.Arguments += String.Format(" --download-sections *{0:00}:{1:00}:{2:00}-{3:00}:{4:00}:{5:00} --force-keyframes-at-cuts", clipStartSpan.Hours, clipStartSpan.Minutes, clipStartSpan.Seconds, clipEndSpan.Hours, clipEndSpan.Minutes, clipEndSpan.Seconds);//check if changes work
             }
-            if(Utils.IsLinkTwitter(url))
-            {
-                info.Arguments += " --username whereosbama --password pyncaloidas123";
-            }
 
 
             info.Arguments += " " + url;
