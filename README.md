@@ -6,15 +6,11 @@
 
 > ⚠️ This project is in **early (inactive) development**. Currently, only the `yt-dlp` wrapper functionality is implemented. `ffmpeg` is planned to be used for video conversion.
 
----
-
 ## Features
 
 - ✅ Downloading videos from various sources using `yt-dlp`
 - ✅ High-quality conversion of downloaded videos to common formats 
 - 🚧 Convenient conversion of videos between formats without downloads
-
----
 
 ## Requirements
 
@@ -23,8 +19,6 @@ Ensure the following executables are available in the Resources directory or sys
 - [yt-dlp](https://github.com/yt-dlp/yt-dlp)
 - [ffmpeg](https://ffmpeg.org/)
 - [PhantomJS](https://phantomjs.org/)
-
----
 
 ## Getting Started
 
@@ -47,8 +41,6 @@ Ensure the following executables are available in the Resources directory or sys
 
 4. Build and run the project.
 
----
-
 ## Usage
 
 1. Launch the application.
@@ -56,13 +48,9 @@ Ensure the following executables are available in the Resources directory or sys
 3. Configure the options to your liking.
 4. Click "Download" to use `yt-dlp` for downloading the content.
 
----
-
 ## License
 
 [MIT License](kpeg/LICENSE)
-
----
 
 ## Disclaimer
 
