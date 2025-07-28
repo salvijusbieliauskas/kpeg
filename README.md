@@ -1,4 +1,4 @@
-<img src="kpeg/Resources/logo.png" alt="drawing" width="200" style="display:block;margin:auto"/>
+<p align="center"><img src="kpeg/Resources/logo.png" alt="drawing" width="200"/></p>
 
 # kpeg
 
