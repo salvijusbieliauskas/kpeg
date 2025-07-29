@@ -211,7 +211,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\favicon.ico" />
-    <Content Include="LICENSE" />
     <Resource Include="Resources\placeholder1.png" />
     <Resource Include="Resources\placeholder2.png" />
     <Resource Include="Resources\thumbnailDownloading.png" />

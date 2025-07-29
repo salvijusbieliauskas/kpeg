@@ -50,7 +50,7 @@ Ensure the following executables are available in the Resources directory or sys
 
 ## License
 
-[MIT License](kpeg/LICENSE)
+[MIT License](LICENSE)
 
 ## Disclaimer
 
